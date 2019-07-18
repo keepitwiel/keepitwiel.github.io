@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2019-07-18T17:06:05+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">R O M V L V S</title><subtitle>ROMVLVS is an upcoming city building game that gives you incredible detail on huge maps.</subtitle><entry><title type="html">A new alpha release coming soon</title><link href="http://localhost:4000/2019/07/17/a-new-start.html" rel="alternate" type="text/html" title="A  new alpha release coming soon" /><published>2019-07-17T00:00:00+02:00</published><updated>2019-07-17T00:00:00+02:00</updated><id>http://localhost:4000/2019/07/17/a-new-start</id><content type="html" xml:base="http://localhost:4000/2019/07/17/a-new-start.html">&lt;p&gt;As usual, it’s been a while since I worked on ROMVLVS.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2019-07-18T21:40:14+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">R O M V L V S</title><subtitle>ROMVLVS is an upcoming city building game that gives you incredible detail on huge maps.</subtitle><entry><title type="html">A new alpha release coming soon</title><link href="http://localhost:4000/2019/07/17/a-new-start.html" rel="alternate" type="text/html" title="A  new alpha release coming soon" /><published>2019-07-17T00:00:00+02:00</published><updated>2019-07-17T00:00:00+02:00</updated><id>http://localhost:4000/2019/07/17/a-new-start</id><content type="html" xml:base="http://localhost:4000/2019/07/17/a-new-start.html">&lt;p&gt;As usual, it’s been a while since I worked on ROMVLVS.&lt;/p&gt;
 
 &lt;p&gt;My handle is now &lt;code class=&quot;highlighter-rouge&quot;&gt;keepitwiel&lt;/code&gt; as opposed to &lt;code class=&quot;highlighter-rouge&quot;&gt;CaptainHennessey&lt;/code&gt;. I am now 
 the proud founder of Keepitwiel Studios!&lt;/p&gt;
@@ -8,12 +8,14 @@ still lives at &lt;a href=&quot;https://romvlvsgame.tumblr.com&quot;&gt;Tumblr&l
 move that content here at some point.&lt;/p&gt;
 
 &lt;p&gt;I’m putting the finishing touches on a new alpha release (v0.1) that can be
-freely downloaded.&lt;/p&gt;</content><author><name></name></author><summary type="html">As usual, it’s been a while since I worked on ROMVLVS.</summary></entry><entry><title type="html">A 400x400 map in ROMVLVS</title><link href="http://localhost:4000/2017/08/01/a_400x400_map.html" rel="alternate" type="text/html" title="A 400x400 map in ROMVLVS" /><published>2017-08-01T00:00:00+02:00</published><updated>2017-08-01T00:00:00+02:00</updated><id>http://localhost:4000/2017/08/01/a_400x400_map</id><content type="html" xml:base="http://localhost:4000/2017/08/01/a_400x400_map.html">&lt;p&gt;&lt;img src=&quot;/images/400x400_map.gif&quot; alt=&quot;A 400x400 map in ROMVLVS.&quot; /&gt;&lt;/p&gt;
+freely downloaded.&lt;/p&gt;</content><author><name></name></author><summary type="html">As usual, it’s been a while since I worked on ROMVLVS.</summary></entry><entry><title type="html">A 400x400 map in ROMVLVS</title><link href="http://localhost:4000/2017/08/01/a_400x400_map.html" rel="alternate" type="text/html" title="A 400x400 map in ROMVLVS" /><published>2017-08-01T00:00:00+02:00</published><updated>2017-08-01T00:00:00+02:00</updated><id>http://localhost:4000/2017/08/01/a_400x400_map</id><content type="html" xml:base="http://localhost:4000/2017/08/01/a_400x400_map.html">&lt;blockquote class=&quot;imgur-embed-pub&quot; lang=&quot;en&quot; data-id=&quot;a/6pGIH&quot;&gt;
+&lt;a href=&quot;//imgur.com/a/6pGIH&quot;&gt;A 400x400 map in ROMVLVS&lt;/a&gt;&lt;/blockquote&gt;
+&lt;script async=&quot;&quot; src=&quot;//s.imgur.com/min/embed.js&quot; charset=&quot;utf-8&quot;&gt;&lt;/script&gt;
 
 &lt;p&gt;Yeah the GIF takes a while to load, but at least you get a sense of 
 what the engine is capabe of at the moment. I use Numpy to handle 
 all the low level storing of data which is pretty fast - even at 
-this size, I haven’t had any scaling issues so far.&lt;/p&gt;</content><author><name></name></author><summary type="html"></summary></entry><entry><title type="html">ROMVLVS engine philosophy</title><link href="http://localhost:4000/2017/07/30/ROMVLVS_engine_philosophy.html" rel="alternate" type="text/html" title="ROMVLVS engine philosophy" /><published>2017-07-30T00:00:00+02:00</published><updated>2017-07-30T00:00:00+02:00</updated><id>http://localhost:4000/2017/07/30/ROMVLVS_engine_philosophy</id><content type="html" xml:base="http://localhost:4000/2017/07/30/ROMVLVS_engine_philosophy.html">&lt;p&gt;In short, I aim for ROMVLVS to be some sort of SimCity++, taking you from 
+this size, I haven’t had any scaling issues so far.&lt;/p&gt;</content><author><name></name></author><summary type="html">A 400x400 map in ROMVLVS</summary></entry><entry><title type="html">ROMVLVS engine philosophy</title><link href="http://localhost:4000/2017/07/30/ROMVLVS_engine_philosophy.html" rel="alternate" type="text/html" title="ROMVLVS engine philosophy" /><published>2017-07-30T00:00:00+02:00</published><updated>2017-07-30T00:00:00+02:00</updated><id>http://localhost:4000/2017/07/30/ROMVLVS_engine_philosophy</id><content type="html" xml:base="http://localhost:4000/2017/07/30/ROMVLVS_engine_philosophy.html">&lt;p&gt;In short, I aim for ROMVLVS to be some sort of SimCity++, taking you from 
 prehistoric to modern times while also invoking some Civ-like concepts 
 such as research and warfare.&lt;/p&gt;
 
@@ -74,12 +76,35 @@ counterbalance other resources. So far, only Culture, Humans, Food and Wood
 are “active” resources that can be altered; I’ve thought about adding things 
 like Disease, Fear, Stone, Bronze, Meat, Fruit, etc. etc.&lt;/p&gt;
 
-&lt;p&gt;Hope you enjoyed this behind-the-scenes look!&lt;/p&gt;</content><author><name></name></author><summary type="html">In short, I aim for ROMVLVS to be some sort of SimCity++, taking you from prehistoric to modern times while also invoking some Civ-like concepts such as research and warfare.</summary></entry><entry><title type="html">ROMVLVS - building only farms</title><link href="http://localhost:4000/2017/07/29/building_only_farms.html" rel="alternate" type="text/html" title="ROMVLVS - building only farms" /><published>2017-07-29T00:00:00+02:00</published><updated>2017-07-29T00:00:00+02:00</updated><id>http://localhost:4000/2017/07/29/building_only_farms</id><content type="html" xml:base="http://localhost:4000/2017/07/29/building_only_farms.html">&lt;p&gt;&lt;img src=&quot;/images/building_only_farms.gif&quot; alt=&quot;Building farms in ROMVLVS.&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;Hope you enjoyed this behind-the-scenes look!&lt;/p&gt;</content><author><name></name></author><summary type="html">In short, I aim for ROMVLVS to be some sort of SimCity++, taking you from prehistoric to modern times while also invoking some Civ-like concepts such as research and warfare.</summary></entry><entry><title type="html">ROMVLVS - building only farms</title><link href="http://localhost:4000/2017/07/29/building_only_farms.html" rel="alternate" type="text/html" title="ROMVLVS - building only farms" /><published>2017-07-29T00:00:00+02:00</published><updated>2017-07-29T00:00:00+02:00</updated><id>http://localhost:4000/2017/07/29/building_only_farms</id><content type="html" xml:base="http://localhost:4000/2017/07/29/building_only_farms.html">&lt;blockquote class=&quot;imgur-embed-pub&quot; lang=&quot;en&quot; data-id=&quot;a/LudrQ&quot;&gt;
+&lt;a href=&quot;//imgur.com/a/LudrQ&quot;&gt;ROMVLVS - building only farms&lt;/a&gt;
+&lt;/blockquote&gt;
+&lt;script async=&quot;&quot; src=&quot;//s.imgur.com/min/embed.js&quot; charset=&quot;utf-8&quot;&gt;&lt;/script&gt;
 
 &lt;p&gt;New in ROMVLVS: farms. The food they produce increases the 
-population significantly. Here’s a GIF to show you how it works!&lt;/p&gt;</content><author><name></name></author><summary type="html"></summary></entry><entry><title type="html">ROMVLVS screenshots</title><link href="http://localhost:4000/2017/07/27/ROMVLVS_screenshots.html" rel="alternate" type="text/html" title="ROMVLVS screenshots" /><published>2017-07-27T00:00:00+02:00</published><updated>2017-07-27T00:00:00+02:00</updated><id>http://localhost:4000/2017/07/27/ROMVLVS_screenshots</id><content type="html" xml:base="http://localhost:4000/2017/07/27/ROMVLVS_screenshots.html">&lt;p&gt;&lt;a href=&quot;https://imgur.com/a/o8gvO&quot;&gt;link&lt;/a&gt;&lt;/p&gt;
+population significantly. Here’s a GIF to show you how it works!&lt;/p&gt;</content><author><name></name></author><summary type="html">ROMVLVS - building only farms</summary></entry><entry><title type="html">ROMVLVS screenshots</title><link href="http://localhost:4000/2017/07/27/ROMVLVS_screenshots.html" rel="alternate" type="text/html" title="ROMVLVS screenshots" /><published>2017-07-27T00:00:00+02:00</published><updated>2017-07-27T00:00:00+02:00</updated><id>http://localhost:4000/2017/07/27/ROMVLVS_screenshots</id><content type="html" xml:base="http://localhost:4000/2017/07/27/ROMVLVS_screenshots.html">&lt;p&gt;&lt;img src=&quot;/images/2017-07-27_screenshot_0.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;I hate Tumblr!&lt;/p&gt;</content><author><name></name></author><summary type="html">link</summary></entry><entry><title type="html">ROMVLVS v0.0.4 release</title><link href="http://localhost:4000/2017/07/06/ROMVLVS-v0.0.4-release.html" rel="alternate" type="text/html" title="ROMVLVS v0.0.4 release" /><published>2017-07-06T00:00:00+02:00</published><updated>2017-07-06T00:00:00+02:00</updated><id>http://localhost:4000/2017/07/06/ROMVLVS-v0.0.4-release</id><content type="html" xml:base="http://localhost:4000/2017/07/06/ROMVLVS-v0.0.4-release.html">&lt;p&gt;After a hiatus of almost 2 years, I picked up the slack and made 
+&lt;p&gt;Anno Romuli 0. Your world is empty, save for the asterisk shaped 
+tile which is your Settlement. It will start emanating Culture 
+which in turn allows the population surrounding your settlement 
+to grow over time. The white-on-pink Omega symbol indicates the 
+cursor.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/2017-07-27_screenshot_1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;We pressed Enter a few times to let the city populate itself. The 
+faces in the top middle indicate the population under the cursor 
+(here highlighted by the white letter ‘F’ - which will build a 
+Farm on that tile when pressed). Note we built quite a few farms 
+around the settlement. The pink house-shaped symbol indicates 
+people are living there.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/2017-07-27_screenshot_2.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;A civilization is born! We also built a Logger (Omega symbol) to 
+produce wood, and Walls (stripy white blocks) to protect our city. 
+There’s a lot of wood currently under the cursor, indicated by the 
+green Ws in the top middle.&lt;/p&gt;</content><author><name></name></author><summary type="html"></summary></entry><entry><title type="html">ROMVLVS v0.0.4 release</title><link href="http://localhost:4000/2017/07/06/ROMVLVS-v0.0.4-release.html" rel="alternate" type="text/html" title="ROMVLVS v0.0.4 release" /><published>2017-07-06T00:00:00+02:00</published><updated>2017-07-06T00:00:00+02:00</updated><id>http://localhost:4000/2017/07/06/ROMVLVS-v0.0.4-release</id><content type="html" xml:base="http://localhost:4000/2017/07/06/ROMVLVS-v0.0.4-release.html">&lt;p&gt;After a hiatus of almost 2 years, I picked up the slack and made 
 some long-needed updates and fixes.&lt;/p&gt;
 
 &lt;p&gt;The game can be downloaded here: https://drive.google.com/open?id=1Ij5XNUwo0A5GtjUbetVDTnXojj_90VWN&lt;/p&gt;
