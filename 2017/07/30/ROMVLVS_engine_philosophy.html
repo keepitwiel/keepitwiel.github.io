@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>ROMVLVS engine philosophy | R O M V L V S</title>
+<meta name="generator" content="Jekyll v3.8.6" />
+<meta property="og:title" content="ROMVLVS engine philosophy" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In short, I aim for ROMVLVS to be some sort of SimCity++, taking you from prehistoric to modern times while also invoking some Civ-like concepts such as research and warfare." />
+<meta property="og:description" content="In short, I aim for ROMVLVS to be some sort of SimCity++, taking you from prehistoric to modern times while also invoking some Civ-like concepts such as research and warfare." />
+<link rel="canonical" href="http://localhost:4000/2017/07/30/ROMVLVS_engine_philosophy.html" />
+<meta property="og:url" content="http://localhost:4000/2017/07/30/ROMVLVS_engine_philosophy.html" />
+<meta property="og:site_name" content="R O M V L V S" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2017-07-30T00:00:00+02:00" />
+<script type="application/ld+json">
+{"url":"http://localhost:4000/2017/07/30/ROMVLVS_engine_philosophy.html","headline":"ROMVLVS engine philosophy","datePublished":"2017-07-30T00:00:00+02:00","dateModified":"2017-07-30T00:00:00+02:00","description":"In short, I aim for ROMVLVS to be some sort of SimCity++, taking you from prehistoric to modern times while also invoking some Civ-like concepts such as research and warfare.","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2017/07/30/ROMVLVS_engine_philosophy.html"},"@type":"BlogPosting","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="R O M V L V S" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">R O M V L V S</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">ROMVLVS engine philosophy</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2017-07-30T00:00:00+02:00" itemprop="datePublished">Jul 30, 2017
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>In short, I aim for ROMVLVS to be some sort of SimCity++, taking you from 
+prehistoric to modern times while also invoking some Civ-like concepts 
+such as research and warfare.</p>
+
+<p>ROMVLVS, like the original SimCity, leans heavily on the idea of cellular 
+automata. Basically, simple rules governing the contents of tiles lead to 
+very complex behaviour.</p>
+
+<p>The original concept popularized by Conway is very binary (either life 
+exists on a tile or not); SimCity made use of difference equations in 
+order to increase or decrease the quantity of e.g. population on a tile. 
+This is the same in ROMVLVS. A simplified set of equations might look like 
+this (<code class="highlighter-rouge">x</code> and <code class="highlighter-rouge">y</code> are quantities to be increased/decreased, <code class="highlighter-rouge">t</code> is time, <code class="highlighter-rouge">t+1</code>
+ is the time at the next turn):</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>x(t+1) = x(t) + C1 * x(t) + C2 * y(t)
+y(t+1) = y(t) + C3 * x(t) + C4 * y(t)
+</code></pre></div></div>
+
+<p>In SimCity you were free to build wherever you wanted, as long as you had 
+enough money to do so. The existing infrastructure generates taxes, which 
+fills the city coffers.</p>
+
+<p>In ROMVLVS, there is no money. Or, at least, not centralized. If you don’t 
+have resources available in a specific tile to build something, you can’t 
+build it, even though it’s available on other tiles.</p>
+
+<p>So how do resources spread around? This is where dispersion comes in place. 
+Think of an inflatable pool in your back yard. When you pierce it, it will 
+empty out in rapid pace, flooding its surroundings. The more time goes by, 
+the more dispersed the water is, eventually flooding your entire garden 
+with a thin layer of water.</p>
+
+<p>In ROMVLVS, dispersion works as follows: if you have a farm producing 1 
+unit of food per turn, a small percentage of that (say 10%) gets dispersed 
+to the four surrounding tiles. Your farm will be left with 0.9 units while 
+its neighbors get 0.025 units each. Those neighboring tiles will disperse 
+10% of 0.025 to their neighbors in the next turn.</p>
+
+<p>In order to keep infinitisemally small amounts of resources spreading 
+around the map, there’s a dispersion threshold.</p>
+
+<p>At the beginning of a game, you start with a Settlement and 5 people (all 
+living in the Settlement). The Settlement produces Culture (quite an 
+abstract resource) which starts spreading outward over time. The difference 
+equation governing the growth of people is such that Culture is a positive 
+factor - i.e.:</p>
+
+<p><code class="highlighter-rouge">Humans = Humans + CULTURE_FACTOR * Culture</code></p>
+
+<p>Now, resources like Food have also a similar positive influence whereas 
+proximity to enemies, extreme temperatures etc. will negatively impact 
+human growth.</p>
+
+<p>This basically describes the ROMVLVS engine. The trick is to balance out 
+all the different resources: adjusting growth and dispersement parameters, 
+adding buildings that modify growth even further, and adding resources that 
+counterbalance other resources. So far, only Culture, Humans, Food and Wood 
+are “active” resources that can be altered; I’ve thought about adding things 
+like Disease, Fear, Stone, Bronze, Meat, Fruit, etc. etc.</p>
+
+<p>Hope you enjoyed this behind-the-scenes look!</p>
+
+
+  </div><a class="u-url" href="/2017/07/30/ROMVLVS_engine_philosophy.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">R O M V L V S</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">R O M V L V S</li><li><a class="u-email" href="mailto:keepitwiel@protonmail.com">keepitwiel@protonmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/keepitwiel"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">keepitwiel</span></a></li><li><a href="https://www.twitter.com/keepitwiel"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">keepitwiel</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>ROMVLVS is an upcoming city building game that gives you incredible detail on huge maps.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
