@@ -1,4 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2019-08-20T17:40:48+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">R O M V L V S</title><subtitle>A city building game that gives you incredible detail on huge maps.</subtitle><entry><title type="html">ROMVLVS v0.1 alpha release</title><link href="http://localhost:4000/2019/08/20/ROMVLVS-v0.1-alpha-release.html" rel="alternate" type="text/html" title="ROMVLVS v0.1 alpha release" /><published>2019-08-20T00:00:00+02:00</published><updated>2019-08-20T00:00:00+02:00</updated><id>http://localhost:4000/2019/08/20/ROMVLVS-v0.1-alpha-release</id><content type="html" xml:base="http://localhost:4000/2019/08/20/ROMVLVS-v0.1-alpha-release.html">&lt;p&gt;If you like free downloads and use macOS, check out the latest ROMVLVS 
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2019-08-27T13:54:10+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">R O M V L V S</title><subtitle>A city building game that gives you incredible detail on huge maps.</subtitle><entry><title type="html">Development Update</title><link href="http://localhost:4000/2019/08/27/development_update.html" rel="alternate" type="text/html" title="Development Update" /><published>2019-08-27T00:00:00+02:00</published><updated>2019-08-27T00:00:00+02:00</updated><id>http://localhost:4000/2019/08/27/development_update</id><content type="html" xml:base="http://localhost:4000/2019/08/27/development_update.html">&lt;p&gt;After last week’s alpha demo release, I’ve started 
+implementing some new features:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Cursor: you can now see what you’re building, and 
+whether it’s possible to build, using the cursor.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Message panel: any important messages will appear 
+in the message panel at the bottom of the screen. 
+For now, it’s mostly warnings and welcome messages.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Here’s a video of the latest development build containing these features:&lt;/p&gt;
+
+&lt;iframe width=&quot;600&quot; height=&quot;400&quot; src=&quot;https://www.youtube.com/embed/cNHQ4PmrOGA&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; encrypted-media; gyroscope; 
+picture-in-picture&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;</content><author><name></name></author><summary type="html">After last week’s alpha demo release, I’ve started implementing some new features:</summary></entry><entry><title type="html">ROMVLVS v0.1 alpha release</title><link href="http://localhost:4000/2019/08/20/ROMVLVS-v0.1-alpha-release.html" rel="alternate" type="text/html" title="ROMVLVS v0.1 alpha release" /><published>2019-08-20T00:00:00+02:00</published><updated>2019-08-20T00:00:00+02:00</updated><id>http://localhost:4000/2019/08/20/ROMVLVS-v0.1-alpha-release</id><content type="html" xml:base="http://localhost:4000/2019/08/20/ROMVLVS-v0.1-alpha-release.html">&lt;p&gt;If you like free downloads and use macOS, check out the latest ROMVLVS 
 release in the &lt;a href=&quot;/downloads.html&quot;&gt;downloads&lt;/a&gt; section!&lt;/p&gt;
 
 &lt;p&gt;I promise there will be releases for Windows and Linux as well 
@@ -265,74 +283,4 @@ as soon as I figure out how to bundle it :)&lt;/p&gt;
 &lt;p&gt;Next I probably need to overhaul the GUI because it’s very hard to know 
 what’s going on.&lt;/p&gt;
 
-&lt;p&gt;Thanks for reading and stay tuned!&lt;/p&gt;</content><author><name></name></author><summary type="html"></summary></entry><entry><title type="html">Hi</title><link href="http://localhost:4000/2014/07/06/hi.html" rel="alternate" type="text/html" title="Hi" /><published>2014-07-06T00:00:00+02:00</published><updated>2014-07-06T00:00:00+02:00</updated><id>http://localhost:4000/2014/07/06/hi</id><content type="html" xml:base="http://localhost:4000/2014/07/06/hi.html">&lt;p&gt;&lt;em&gt;&lt;strong&gt;Note from the future&lt;/strong&gt;: this post was originally found on &lt;a href=&quot;https://romvlvsgame.tumblr.com&quot;&gt;Tumblr&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/civpy_screenshot_0.png&quot; alt=&quot;Initial state of a Civpy game.&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/civpy_screenshot_1.png&quot; alt=&quot;The same world with a small village.&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Hi, I’m Captain Hennessey, creator of Civpy.&lt;/p&gt;
-
-&lt;p&gt;Civpy is a civilization game, written in Python. It’s going to have a 
-flashier name but Civpy will do for now.&lt;/p&gt;
-
-&lt;p&gt;I’m also keeping it open source for now, to see where it goes.&lt;/p&gt;
-
-&lt;p&gt;Above you see two images. The first is a randomly generated world with 
-a tiny house. This is the initial state of each Civpy game.&lt;/p&gt;
-
-&lt;p&gt;The next image shows the same world, only with the house evolved into a 
-small village.&lt;/p&gt;
-
-&lt;p&gt;This is what I want to make: a civ game on an expansive map that’s very 
-detailed at the same time. Cities aren’t just one tile (as was the case 
-in the old Civilization franchise) but are a collection of buildings.&lt;/p&gt;
-
-&lt;p&gt;Each tile represents about the same size as a SimCity tile, which is 
-around 1 acre. (So yes, if I want a map to represent an entire planet, 
-we’ll need around 1m x 1m tiles—let’s park that thought for now)&lt;/p&gt;
-
-&lt;p&gt;The map is generated by a randomized algorithm. First it generates an 
-altitude map, based on which other maps are generated (temperature, 
-biomass, etc.)&lt;/p&gt;
-
-&lt;p&gt;The idea is that humans naturally start spreading around, but that the 
-rate of spreading is limited by the surroundings: if there’s not enough 
-biomass or arable land around, the population capacity per tile is capped. 
-Also, “wilderness” is a factor: if you live on the edge of town, you’re 
-more exposed to bad elements like wolves, barbarians etc.&lt;/p&gt;
-
-&lt;p&gt;OK, now some background about me and my motivation to make this game.&lt;/p&gt;
-
-&lt;p&gt;As we all know, game design involves a lot of hard choices, cursing and 
-drinking. To make things worse, I’m not a good programmer.&lt;/p&gt;
-
-&lt;p&gt;Choice #1: Python.&lt;/p&gt;
-
-&lt;p&gt;Python is a little slow but there’s a lot of useful modules available such 
-as Cocos2d. So basically all of the graphics and interface handling are 
-done by Cocos2d. Later I will try to employ Cython to speed up the game, 
-as well as directly use OpenGL to specifically speed up the graphics (it’s 
-painfully slow on big maps and a reason why I can’t go beyond 64x64 
-currently).&lt;/p&gt;
-
-&lt;p&gt;Choice #2: Graphics.&lt;/p&gt;
-
-&lt;p&gt;The tiles are 16x16 pixels. Yes that resolution hasn’t been fashionable 
-since the late ‘80s but it speeds up art development significantly. The 
-trick is to make each pixel count.&lt;/p&gt;
-
-&lt;p&gt;Choice #3: No visible actors.&lt;/p&gt;
-
-&lt;p&gt;Most of the game state is stored in a bunch of two-dimensional arrays. You 
-won’t see tiny figures running around (at least not for now). I figured it 
-was going to take a lot of effort modeling individual characters (peasants, 
-lumberjacks, smiths whatever) as they go about their business. Instead I 
-chose for a SimCity-like approach, where (for example) population in one 
-tile depends on the amount of food in the surrounding tiles.&lt;/p&gt;
-
-&lt;p&gt;Choice #4: No AI.&lt;/p&gt;
-
-&lt;p&gt;Maybe later :)&lt;/p&gt;
-
-&lt;p&gt;Thanks for reading, I hope to update as much as possible!&lt;/p&gt;</content><author><name></name></author><summary type="html">Note from the future: this post was originally found on Tumblr.</summary></entry></feed>
+&lt;p&gt;Thanks for reading and stay tuned!&lt;/p&gt;</content><author><name></name></author><summary type="html"></summary></entry></feed>

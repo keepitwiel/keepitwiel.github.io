@@ -1,0 +1,29 @@
+character_source_file_name: 10x10_romvlvs.png
+
+screen_dimensions: {x: 110, y: 67}
+main_menu_display:
+  dimensions: {x: 18, y: 13}
+  top_left_coordinates: {x: 50, y: 20}
+game_display:
+  dimensions: {x: 110, y: 67}
+  top_left_coordinates: {x: 0, y: 0}
+  main_menu:
+    dimensions: {x: 4, y: 1}
+    top_left_coordinates: {x: 1, y: 1}
+  building_selection_menu:
+    dimensions: {x: 16, y: 64}
+    top_left_coordinates: {x: 0, y: 3}
+debug_menu_display:
+  dimensions: {x: 20, y: 40}
+  top_left_coordinates: {x: 50, y: 20}
+map:
+  dimensions: {x: 64, y: 64}
+map_console:
+  dimensions: {x: 64, y: 64}
+  top_left_coordinates: {x: 14, y: 3}
+  offset: {x: 0, y: 0}
+info_panel_console:
+  dimensions: {x: 32, y: 64}
+  top_left_coordinates: {x: 78, y: 3}
+
+heatmap_names: ["composite", "human", "food", "wood"]

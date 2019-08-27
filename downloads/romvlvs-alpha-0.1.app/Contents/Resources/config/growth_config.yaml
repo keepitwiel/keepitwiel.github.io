@@ -1,0 +1,13 @@
+human:
+  base_growth: 0.002
+  base_decay: -0.001
+  water_nearby: 0.002
+  culture: 0.002
+  Food: 0.002
+culture:
+  base_decay: -0.01
+Food:
+  base_decay: -0.02
+  human: -0.01
+Wood:
+  base_decay: -0.05
