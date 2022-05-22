@@ -3,7 +3,7 @@ layout: post
 title: Quick recap
 ---
 
-![The player map with stats on the side.](/images/2014-12-25_romvlvs_development_screenshot_0.png)
+![The player map with stats on the side.](/romvlvs/images/2014-12-25_romvlvs_development_screenshot_0.png)
 
 (Quick recap: I’m trying to build a Civilization/SimCity crossover, 
 combining the bottom-up fun of SimCity with Civ’s top-down joy of 
