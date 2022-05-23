@@ -21,10 +21,10 @@
 title: keepitwiel organization
 email: keepitwiel@protonmail.com
 description:
-  Homepage of the keepitwiel organization
+  Copyright (c) keepitwiel organization. All rights reserved.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
-twitter_username: keepitwiel
+twitter_username: starkillervibes
 github_username:  keepitwiel
 
 # Build settings
