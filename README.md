@@ -16,4 +16,10 @@ Root folder (make sure to set this as root folder in the repo settings on Github
 
 Folder with all blog posts (markdown files)
 
+To serve the website locally, run this:
+
+    bundle exec jekyll serve
+
+and read the instructions. Most likely the website will show up at https://127.0.0.1:4000
+
 Copyright (c) keepitwiel organization. All rights reserved.

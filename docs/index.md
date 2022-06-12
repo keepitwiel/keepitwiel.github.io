@@ -5,7 +5,7 @@
 layout: home
 ---
 
-Welcome to the home of the keepitwiel organization!
+Welcome to the home of keepitwiel!
 
 # Music label
 keepitwiel communications - the home of my musical projects such as The Starkiller (remixes), Super Hans (disco-dance) and Che Guerrilla 
@@ -23,6 +23,8 @@ Founded in 2022, the label is the creative outlet for the many musical projects 
 I dabble in software, mostly Python. Here are some noteable projects:
  
 [ROMVLVS](romvlvs/romvlvs.html)
+
+[just-another-music-generator](https://github.com/keepitwiel/just-another-music-generator)
 
 
 # Blog
