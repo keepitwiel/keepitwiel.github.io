@@ -354,12 +354,16 @@ export class GPUSimulation {
         gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, this.textures.sedimentA);
         gl.uniform1i(gl.getUniformLocation(this.programs.render, 'u_sediment'), 2);
 
+        gl.activeTexture(gl.TEXTURE3); gl.bindTexture(gl.TEXTURE_2D, this.textures.velocity);
+        gl.uniform1i(gl.getUniformLocation(this.programs.render, 'u_velocity'), 3);
+
         // View mode
         let mode = 0;
         if (viewMode === 'terrain') mode = 0;
         else if (viewMode === 'height') mode = 1;
         else if (viewMode === 'water') mode = 2;
         else if (viewMode === 'sediment') mode = 3;
+        else if (viewMode === 'velocity') mode = 4;
 
         gl.uniform1i(gl.getUniformLocation(this.programs.render, 'u_viewMode'), mode);
         gl.uniform1f(gl.getUniformLocation(this.programs.render, 'u_viewSensitivity'), this.params.viewSensitivity);

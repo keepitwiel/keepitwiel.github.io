@@ -212,8 +212,9 @@ precision highp float;
 uniform sampler2D u_terrain;
 uniform sampler2D u_water;
 uniform sampler2D u_sediment;
+uniform sampler2D u_velocity;
 uniform vec2 u_size;
-uniform int u_viewMode; // 0: Terrain, 1: Height, 2: Water, 3: Sediment
+uniform int u_viewMode; // 0: Terrain, 1: Height, 2: Water, 3: Sediment, 4: Velocity
 uniform float u_viewSensitivity;
 
 out vec4 outColor;
@@ -225,6 +226,7 @@ void main() {
     float h = texelFetch(u_terrain, coord, 0).r;
     float w = texelFetch(u_water, coord, 0).r;
     float s = texelFetch(u_sediment, coord, 0).r;
+    vec2 v = texelFetch(u_velocity, coord, 0).xy;
     
     vec3 color = vec3(0.0);
     
@@ -276,6 +278,10 @@ void main() {
     } else if (u_viewMode == 3) {
         float val = min(1.0, s * u_viewSensitivity);
         color = vec3(val, val * 0.5, 0.0);
+    } else if (u_viewMode == 4) {
+        // Velocity
+        vec2 vn = v * u_viewSensitivity * 5.0;
+        color = vec3(0.5 + vn.x, 0.5 + vn.y, 0.5);
     }
     
     outColor = vec4(color, 1.0);
