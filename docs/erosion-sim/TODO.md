@@ -1,0 +1,8 @@
+- calculate accurate surface normals for rendering
+- create a stylized view that better displays water flow
+  - if water_depth < some_threshold: color fragment with terrain height color map and a light shadow (given some light source direction)
+  - else, color fragment according to water depth (low water depth = white; high water depth = deep blue)
+- add option to "bump terrain". When clicking mouse, a hill is added to the terrain height - the closer the fragment to the cursor, the higher the terrain increase, using some kind of kernel mask.
+- create a flux view
+- create a velocity view
+- fix sediment view
