@@ -250,6 +250,8 @@ export class GPUSimulation {
             gl.drawBuffers(buffers);
         } else {
             gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, output, 0);
+            // Unbind attachment 1 to prevent feedback loops
+            gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT1, gl.TEXTURE_2D, null, 0);
             gl.drawBuffers([gl.COLOR_ATTACHMENT0]);
         }
 
