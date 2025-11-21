@@ -273,14 +273,13 @@ void main() {
         float val = h / 100.0;
         color = vec3(val);
     } else if (u_viewMode == 2) {
-        float val = min(1.0, w * u_viewSensitivity); // Adjustable sensitivity
+        float val = w * u_viewSensitivity;
         color = vec3(0.0, 0.0, val);
     } else if (u_viewMode == 3) {
-        float val = min(1.0, s * u_viewSensitivity);
+        float val = s * u_viewSensitivity;
         color = vec3(val, val * 0.5, 0.0);
     } else if (u_viewMode == 4) {
-        // Velocity
-        vec2 vn = v * u_viewSensitivity * 5.0;
+        vec2 vn = v * u_viewSensitivity;
         color = vec3(0.5 + vn.x, 0.5 + vn.y, 0.5);
     }
     
