@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hydrodynamic Erosion Simulator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="app">
+        <div id="canvas-container">
+            <canvas id="simCanvas"></canvas>
+        </div>
+        <div id="controls">
+            <h1>Erosion Sim</h1>
+
+            <div class="control-group">
+                <label>Simulation Status</label>
+                <div class="button-row">
+                    <button id="btn-start">Start</button>
+                    <button id="btn-stop">Pause</button>
+                    <button id="btn-reset">Reset</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="param-rain">Rain Rate</label>
+                <input type="range" id="param-rain" min="0" max="0.01" step="0.001" value="0.001">
+                <span class="value-display" id="val-rain">0.001</span>
+            </div>
+
+            <div class="control-group">
+                <label for="param-evap">Evaporation Rate</label>
+                <input type="range" id="param-evap" min="0" max="0.01" step="0.001" value="0.001">
+                <span class="value-display" id="val-evap">0.001</span>
+            </div>
+
+            <div class="control-group">
+                <label for="param-erode">Erosion Rate (K)</label>
+                <input type="range" id="param-erode" min="0" max="0.1" step="0.001" value="0.01">
+                <span class="value-display" id="val-erode">0.01</span>
+            </div>
+
+            <div class="control-group">
+                <label for="param-deposit">Deposition Rate</label>
+                <input type="range" id="param-deposit" min="0" max="0.1" step="0.001" value="0.01">
+                <span class="value-display" id="val-deposit">0.01</span>
+            </div>
+
+            <div class="control-group">
+                <label for="param-speed">Sim Speed (Steps/Frame)</label>
+                <input type="range" id="param-speed" min="1" max="50" step="1" value="5">
+                <span class="value-display" id="val-speed">5</span>
+            </div>
+
+            <div class="control-group">
+                <label for="param-octaves">Terrain Octaves</label>
+                <input type="range" id="param-octaves" min="1" max="11" step="1" value="10">
+                <span class="value-display" id="val-octaves">10</span>
+            </div>
+
+            <div class="control-group">
+                <label for="param-size">Map Size</label>
+                <input type="range" id="param-size" min="0" max="3" step="1" value="2">
+                <span class="value-display" id="val-size">1024x1024</span>
+            </div>
+
+            <div class="control-group">
+                <label for="param-water">Initial Water Level</label>
+                <input type="range" id="param-water" min="0" max="100" step="1" value="40">
+                <span class="value-display" id="val-water">40</span>
+            </div>
+
+            <div class="control-group">
+                <label for="param-sensitivity">View Sensitivity</label>
+                <input type="range" id="param-sensitivity" min="0.1" max="50.0" step="0.1" value="10.0">
+                <span class="value-display" id="val-sensitivity">10.0</span>
+            </div>
+
+            <div class="control-group">
+                <label>View Mode</label>
+                <select id="view-mode">
+                    <option value="terrain">Terrain + Water</option>
+                    <option value="height">Height Map</option>
+                    <option value="water">Water Depth</option>
+                    <option value="sediment">Sediment Concentration</option>
+                </select>
+            </div>
+
+            <div class="stats">
+                <p>FPS: <span id="fps-counter">0</span></p>
+                <p>Steps: <span id="step-counter">0</span></p>
+            </div>
+        </div>
+    </div>
+    <div id="status" class="status-bar" aria-live="polite">Initializing…</div>
+    <script type="module" src="main.js"></script>
+</body>
+
+</html>
