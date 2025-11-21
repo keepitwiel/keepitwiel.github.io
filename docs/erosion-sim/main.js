@@ -13,6 +13,7 @@ class App {
         const erodeEl = document.getElementById('param-erode');
         const depositEl = document.getElementById('param-deposit');
         const octEl = document.getElementById('param-octaves');
+        const gainEl = document.getElementById('param-gain');
         const waterEl = document.getElementById('param-water');
         const sensEl = document.getElementById('param-sensitivity');
 
@@ -25,6 +26,7 @@ class App {
             erosionRate: erodeEl ? parseFloat(erodeEl.value) : undefined,
             depositionRate: depositEl ? parseFloat(depositEl.value) : undefined,
             octaves: octEl ? parseInt(octEl.value) : undefined,
+            gain: gainEl ? parseFloat(gainEl.value) : undefined,
             initialWaterLevel: waterEl ? parseFloat(waterEl.value) : undefined,
             viewSensitivity: sensEl ? parseFloat(sensEl.value) : undefined
         };
@@ -108,6 +110,24 @@ class App {
         octDisp.textContent = octEl.value;
         // ensure status reflects initial octaves
         this.updateStatus();
+
+        // Gain Control
+        const gainEl = document.getElementById('param-gain');
+        const gainDisp = document.getElementById('val-gain');
+        gainEl.onchange = (e) => {
+            const val = parseFloat(e.target.value);
+            this.simulation.params.gain = val;
+            gainDisp.textContent = val;
+            this.simulation.reset();
+            this.draw();
+        };
+        gainEl.oninput = (e) => {
+            gainDisp.textContent = e.target.value;
+        };
+        // Initialize gain from control
+        const initGain = parseFloat(gainEl.value);
+        this.simulation.params.gain = initGain;
+        gainDisp.textContent = gainEl.value;
 
         // Map Size Control
         const sizeEl = document.getElementById('param-size');

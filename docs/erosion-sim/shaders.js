@@ -280,7 +280,7 @@ void main() {
         color = vec3(val, val * 0.5, 0.0);
     } else if (u_viewMode == 4) {
         vec2 vn = v * u_viewSensitivity;
-        color = vec3(0.5 + vn.x, 0.5 + vn.y, 0.5);
+        color = vec3(length(vn), 0.5 + vn.x, 0.5 + vn.y);
     }
     
     outColor = vec4(color, 1.0);

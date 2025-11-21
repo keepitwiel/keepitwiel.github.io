@@ -24,6 +24,7 @@ export class GPUSimulation {
             pipeLength: 1.0,
             dt: 0.1,
             octaves: 10,
+            gain: 0.55,
             initialWaterLevel: 0,
             viewSensitivity: 10,
             ...initialParams
@@ -130,7 +131,7 @@ export class GPUSimulation {
 
         // Reuse fBm logic
         const LACUNARITY = 1.9;
-        const GAIN = 1.0 / LACUNARITY;
+        const GAIN = this.params.gain;
         const ROTATION_ANGLE = 1.0;
         const COS_R = Math.cos(ROTATION_ANGLE);
         const SIN_R = Math.sin(ROTATION_ANGLE);
