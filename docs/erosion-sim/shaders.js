@@ -284,7 +284,7 @@ void main() {
             color = mix(lightOrange, darkBlue, t);
         }
     } else if (u_viewMode == 3) {
-        float val = s * u_viewSensitivity;
+        float val = s * u_viewSensitivity * 1000.0;
         color = vec3(val, val * 0.5, 0.0);
     } else if (u_viewMode == 4) {
         vec2 vn = v * u_viewSensitivity;

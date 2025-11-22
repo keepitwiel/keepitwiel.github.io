@@ -14,7 +14,7 @@ class App {
         this.gridSize = sizes[sizeIdx] || 1024;
 
         const slopeMagEl = document.getElementById('param-slope-mag');
-        const slopeDirEl = document.getElementById('param-slope-dir')
+        const slopeDirEl = document.getElementById('param-slope-dir');
         const octEl = document.getElementById('param-octaves');
         const gainEl = document.getElementById('param-gain');
         const waterEl = document.getElementById('param-water');
@@ -29,8 +29,8 @@ class App {
         const sensEl = document.getElementById('param-sensitivity');
         
         const initialParams = {
-            slopeMag: slopeMagEl ? parseInt(slopeMagEl.value) : undefined,
-            slopeDir: slopeDirEl ? parseInt(slopeDirEl.value) : undefined,
+            slopeMag: slopeMagEl ? parseFloat(slopeMagEl.value) : undefined,
+            slopeDir: slopeDirEl ? parseFloat(slopeDirEl.value) : undefined,
             octaves: octEl ? parseInt(octEl.value) : undefined,
             gain: gainEl ? parseFloat(gainEl.value) : undefined,
             initialWaterLevel: waterEl ? parseFloat(waterEl.value) : undefined,
