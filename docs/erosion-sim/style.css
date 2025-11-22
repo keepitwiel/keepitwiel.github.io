@@ -56,6 +56,51 @@ h1 {
     color: var(--accent-color);
 }
 
+.control-supergroup {
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+.control-supergroup-header {
+    padding: 8px;
+    background-color: #333;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+    color: var(--text-color);
+}
+
+.control-supergroup-header:hover {
+    background-color: #3a3a3a;
+}
+
+.control-supergroup-content {
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.control-supergroup.collapsed .control-supergroup-content {
+    display: none;
+}
+
+.control-supergroup-header::after {
+    content: '▼';
+    font-size: 0.7em;
+    opacity: 0.7;
+}
+
+.control-supergroup.collapsed .control-supergroup-header::after {
+    content: '▶';
+}
+
 .control-group {
     display: flex;
     flex-direction: column;

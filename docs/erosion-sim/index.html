@@ -16,90 +16,102 @@
         <div id="controls">
             <h1>Erosion Sim</h1>
 
-            <div class="control-group">
-                <label>Simulation Status</label>
-                <div class="button-row">
-                    <button id="btn-start">Start</button>
-                    <button id="btn-stop">Pause</button>
-                    <button id="btn-reset">Reset</button>
+            <div class="control-supergroup">
+                <div class="control-supergroup-header">Simulation</div>
+                <div class="control-supergroup-content">
+                    <div class="control-group">
+                        <div class="button-row">
+                            <button id="btn-start">Start</button>
+                            <button id="btn-stop">Pause</button>
+                            <button id="btn-reset">Reset</button>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label for="param-speed">Sim Speed (Steps/Frame)</label>
+                        <input type="range" id="param-speed" min="1" max="50" step="1" value="5">
+                        <span class="value-display" id="val-speed">5</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="control-group">
-                <label for="param-rain">Rain Rate</label>
-                <input type="range" id="param-rain" min="0" max="0.01" step="0.001" value="0.001">
-                <span class="value-display" id="val-rain">0.001</span>
+            <div class="control-supergroup">
+                <div class="control-supergroup-header">Physics</div>
+                <div class="control-supergroup-content">
+                    <div class="control-group">
+                        <label for="param-rain">Rain Rate</label>
+                        <input type="range" id="param-rain" min="0" max="0.01" step="0.001" value="0.001">
+                        <span class="value-display" id="val-rain">0.001</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="param-evap">Evaporation Rate</label>
+                        <input type="range" id="param-evap" min="0" max="0.01" step="0.001" value="0.001">
+                        <span class="value-display" id="val-evap">0.001</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="param-erode">Erosion Rate (K)</label>
+                        <input type="range" id="param-erode" min="0" max="0.1" step="0.001" value="0.01">
+                        <span class="value-display" id="val-erode">0.01</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="param-deposit">Deposition Rate</label>
+                        <input type="range" id="param-deposit" min="0" max="0.1" step="0.001" value="0.01">
+                        <span class="value-display" id="val-deposit">0.01</span>
+                    </div>
+                </div>
             </div>
 
-            <div class="control-group">
-                <label for="param-evap">Evaporation Rate</label>
-                <input type="range" id="param-evap" min="0" max="0.01" step="0.001" value="0.001">
-                <span class="value-display" id="val-evap">0.001</span>
+            <div class="control-supergroup collapsed">
+                <div class="control-supergroup-header">Map Generation</div>
+                <div class="control-supergroup-content">
+                    <div class="control-group">
+                        <label for="param-octaves">Terrain Octaves</label>
+                        <input type="range" id="param-octaves" min="1" max="11" step="1" value="10">
+                        <span class="value-display" id="val-octaves">10</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="param-gain">Terrain Gain</label>
+                        <input type="range" id="param-gain" min="0.0" max="1.0" step="0.01" value="0.55">
+                        <span class="value-display" id="val-gain">0.55</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="param-size">Map Size</label>
+                        <input type="range" id="param-size" min="0" max="3" step="1" value="2">
+                        <span class="value-display" id="val-size">1024x1024</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="param-water">Initial Water Level</label>
+                        <input type="range" id="param-water" min="0" max="100" step="1" value="40">
+                        <span class="value-display" id="val-water">40</span>
+                    </div>
+                </div>
             </div>
 
-            <div class="control-group">
-                <label for="param-erode">Erosion Rate (K)</label>
-                <input type="range" id="param-erode" min="0" max="0.1" step="0.001" value="0.01">
-                <span class="value-display" id="val-erode">0.01</span>
-            </div>
+            <div class="control-supergroup">
+                <div class="control-supergroup-header">Visualization</div>
+                <div class="control-supergroup-content">
+                    <div class="control-group">
+                        <label for="param-sensitivity">View Sensitivity</label>
+                        <input type="range" id="param-sensitivity" min="0.1" max="50.0" step="0.1" value="10.0">
+                        <span class="value-display" id="val-sensitivity">10.0</span>
+                    </div>
 
-            <div class="control-group">
-                <label for="param-deposit">Deposition Rate</label>
-                <input type="range" id="param-deposit" min="0" max="0.1" step="0.001" value="0.01">
-                <span class="value-display" id="val-deposit">0.01</span>
-            </div>
-
-            <div class="control-group">
-                <label for="param-speed">Sim Speed (Steps/Frame)</label>
-                <input type="range" id="param-speed" min="1" max="50" step="1" value="5">
-                <span class="value-display" id="val-speed">5</span>
-            </div>
-
-            <div class="control-group">
-                <label for="param-octaves">Terrain Octaves</label>
-                <input type="range" id="param-octaves" min="1" max="11" step="1" value="10">
-                <span class="value-display" id="val-octaves">10</span>
-            </div>
-
-            <div class="control-group">
-                <label for="param-gain">Terrain Gain</label>
-                <input type="range" id="param-gain" min="0.0" max="1.0" step="0.01" value="0.55">
-                <span class="value-display" id="val-gain">0.55</span>
-            </div>
-
-            <div class="control-group">
-                <label for="param-amp">Terrain Amplitude</label>
-                <input type="range" id="param-amp" min="0.0" max="100.0" step="0.1" value="50.0">
-                <span class="value-display" id="val-amp">50.0</span>
-            </div>
-
-            <div class="control-group">
-                <label for="param-size">Map Size</label>
-                <input type="range" id="param-size" min="0" max="3" step="1" value="2">
-                <span class="value-display" id="val-size">1024x1024</span>
-            </div>
-
-            <div class="control-group">
-                <label for="param-water">Initial Water Level</label>
-                <input type="range" id="param-water" min="0" max="100" step="1" value="40">
-                <span class="value-display" id="val-water">40</span>
-            </div>
-
-            <div class="control-group">
-                <label for="param-sensitivity">View Sensitivity</label>
-                <input type="range" id="param-sensitivity" min="0.1" max="50.0" step="0.1" value="10.0">
-                <span class="value-display" id="val-sensitivity">10.0</span>
-            </div>
-
-            <div class="control-group">
-                <label>View Mode</label>
-                <select id="view-mode">
-                    <option value="water">Water Depth</option>
-                    <option value="terrain">Terrain + Water</option>
-                    <option value="sediment">Sediment Concentration</option>
-                    <option value="height">Height Map</option>
-                    <option value="velocity">Velocity</option>
-                </select>
+                    <div class="control-group">
+                        <label>View Mode</label>
+                        <select id="view-mode">
+                            <option value="water">Water Depth</option>
+                            <option value="terrain">Terrain + Water</option>
+                            <option value="sediment">Sediment Concentration</option>
+                            <option value="height">Height Map</option>
+                            <option value="velocity">Velocity</option>
+                        </select>
+                    </div>
+                </div>
             </div>
 
             <div class="stats">
