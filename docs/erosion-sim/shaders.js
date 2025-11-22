@@ -100,7 +100,8 @@ void main() {
     float newW = max(0.0, w + dw);
     
     // Evaporation
-    newW *= (1.0 - u_evapRate * u_dt);
+    // Physically correct: subtract constant depth based on rate * time
+    newW = max(0.0, newW - u_evapRate * u_dt);
     
     outColor = vec4(newW, 0.0, 0.0, 1.0);
 }`;
