@@ -219,6 +219,9 @@ uniform float u_viewSensitivity;
 
 out vec4 outColor;
 
+const vec3 lightOrange = vec3(1.0, 0.6, 0.2);
+const vec3 darkBlue = vec3(0.0, 0.1, 0.4);
+
 void main() {
     vec2 uv = gl_FragCoord.xy / u_size;
     ivec2 coord = ivec2(gl_FragCoord.xy);
@@ -273,8 +276,13 @@ void main() {
         float val = h / 100.0;
         color = vec3(val);
     } else if (u_viewMode == 2) {
-        float val = w * u_viewSensitivity;
-        color = vec3(0.0, 0.0, val);
+        if (w < u_viewSensitivity) {
+            color = mix(vec3(0.0), lightOrange, w / u_viewSensitivity);
+        } else {
+            // Asymptotic transform: 0 at w=0.001, approaches 1 as w -> infinity
+            float t = 1.0 - exp(-(w - u_viewSensitivity) * u_viewSensitivity);
+            color = mix(lightOrange, darkBlue, t);
+        }
     } else if (u_viewMode == 3) {
         float val = s * u_viewSensitivity;
         color = vec3(val, val * 0.5, 0.0);
