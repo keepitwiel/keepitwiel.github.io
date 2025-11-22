@@ -40,7 +40,7 @@ canvas {
 }
 
 #controls {
-    width: 260px;
+    width: 320px;
     background-color: var(--panel-bg);
     padding: 6px;
     border-left: 1px solid var(--border-color);
@@ -103,24 +103,31 @@ h1 {
 
 .control-group {
     display: flex;
-    flex-direction: column;
-    gap: 6px;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
 }
 
 label {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     font-weight: 600;
     color: #aaa;
+    flex: 0 0 160px; /* Fixed width for labels */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 input[type="range"] {
-    width: 100%;
+    flex: 1;
+    min-width: 0; /* Allow shrinking */
 }
 
 .value-display {
     font-size: 0.78rem;
     text-align: right;
     color: var(--accent-color);
+    flex: 0 0 40px; /* Fixed width for values */
 }
 
 .button-row {
