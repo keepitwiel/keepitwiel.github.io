@@ -16,7 +16,8 @@ class App {
         const gainEl = document.getElementById('param-gain');
         const waterEl = document.getElementById('param-water');
         const sensEl = document.getElementById('param-sensitivity');
-
+        const ampEl = document.getElementById('param-amp');
+        
         const sizeIdx = sizeEl ? parseInt(sizeEl.value) || 0 : 2;
         this.gridSize = sizes[sizeIdx] || 1024;
 
@@ -27,6 +28,7 @@ class App {
             depositionRate: depositEl ? parseFloat(depositEl.value) : undefined,
             octaves: octEl ? parseInt(octEl.value) : undefined,
             gain: gainEl ? parseFloat(gainEl.value) : undefined,
+            amp: ampEl ? parseFloat(ampEl.value) : undefined,
             initialWaterLevel: waterEl ? parseFloat(waterEl.value) : undefined,
             viewSensitivity: sensEl ? parseFloat(sensEl.value) : undefined
         };
@@ -77,6 +79,7 @@ class App {
         bindParam('param-evap', 'evaporationRate');
         bindParam('param-erode', 'erosionRate');
         bindParam('param-deposit', 'depositionRate');
+        bindParam('param-amp', 'amp');
 
         // Speed Control
         const speedEl = document.getElementById('param-speed');

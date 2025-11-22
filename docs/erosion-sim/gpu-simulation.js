@@ -25,6 +25,7 @@ export class GPUSimulation {
             dt: 0.1,
             octaves: 10,
             gain: 0.55,
+            amp: 100,
             initialWaterLevel: 0,
             viewSensitivity: 10,
             ...initialParams
@@ -132,6 +133,7 @@ export class GPUSimulation {
         // Reuse fBm logic
         const LACUNARITY = 1.9;
         const GAIN = this.params.gain;
+        const GLOBAL_AMP = this.params.amp;
         const ROTATION_ANGLE = 1.0;
         const COS_R = Math.cos(ROTATION_ANGLE);
         const SIN_R = Math.sin(ROTATION_ANGLE);
@@ -182,7 +184,7 @@ export class GPUSimulation {
                 const nx = x / size;
                 const ny = y / size;
                 const h = fBm(nx * domainScale, ny * domainScale, this.params.octaves);
-                const shapedH = Math.pow(h, 2) * 100;
+                const shapedH = h * GLOBAL_AMP;
 
                 terrainData[i] = shapedH;
                 terrainData[i + 1] = 0; terrainData[i + 2] = 0; terrainData[i + 3] = 1;
