@@ -26,6 +26,8 @@ export class GPUSimulation {
             octaves: 10,
             gain: 0.55,
             amp: 100,
+            slopeMag: 0,
+            slopeDir: 0,
             initialWaterLevel: 0,
             viewSensitivity: 10,
             ...initialParams
@@ -134,6 +136,8 @@ export class GPUSimulation {
         const LACUNARITY = 1.9;
         const GAIN = this.params.gain;
         const GLOBAL_AMP = this.params.amp;
+        const SLOPE_MAG = this.params.slopeMag || 0;
+        const SLOPE_DIR = (this.params.slopeDir || 0) * Math.PI / 180.0; // Degrees to radians
         const ROTATION_ANGLE = 1.0;
         const COS_R = Math.cos(ROTATION_ANGLE);
         const SIN_R = Math.sin(ROTATION_ANGLE);
@@ -184,14 +188,21 @@ export class GPUSimulation {
                 const nx = x / size;
                 const ny = y / size;
                 const h = fBm(nx * domainScale, ny * domainScale, this.params.octaves);
-                const shapedH = h * GLOBAL_AMP;
+                
+                // Apply slope
+                // Center coordinates for rotation
+                const cx = nx - 0.5;
+                const cy = ny - 0.5;
+                const slope = (cx * Math.cos(SLOPE_DIR) + cy * Math.sin(SLOPE_DIR)) * SLOPE_MAG * size; // Scale slope to match terrain scale roughly
+
+                const shapedH = h * GLOBAL_AMP + slope;
 
                 terrainData[i] = shapedH;
                 terrainData[i + 1] = 0; terrainData[i + 2] = 0; terrainData[i + 3] = 1;
 
                 // Initial Water
                 const waterLevel = this.params.initialWaterLevel || 0;
-                const w = Math.max(0, waterLevel - shapedH);
+                const w = Math.max(0, waterLevel * GLOBAL_AMP - shapedH);
                 waterData[i] = w;
             }
         }

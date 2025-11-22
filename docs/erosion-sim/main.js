@@ -7,27 +7,39 @@ class App {
         // Simulation parameters - initialize from the controls in `index.html` when possible
         const sizes = [256, 512, 1024, 2048];
         // Read UI values (DOM is available because App is constructed after DOMContentLoaded)
+
+        // terrain generation
         const sizeEl = document.getElementById('param-size');
+        const sizeIdx = sizeEl ? parseInt(sizeEl.value) || 0 : 3;
+        this.gridSize = sizes[sizeIdx] || 1024;
+
+        const slopeMagEl = document.getElementById('param-slope-mag');
+        const slopeDirEl = document.getElementById('param-slope-dir')
+        const octEl = document.getElementById('param-octaves');
+        const gainEl = document.getElementById('param-gain');
+        const waterEl = document.getElementById('param-water');
+
+        // physics
         const rainEl = document.getElementById('param-rain');
         const evapEl = document.getElementById('param-evap');
         const erodeEl = document.getElementById('param-erode');
         const depositEl = document.getElementById('param-deposit');
-        const octEl = document.getElementById('param-octaves');
-        const gainEl = document.getElementById('param-gain');
-        const waterEl = document.getElementById('param-water');
+
+        // view modes
         const sensEl = document.getElementById('param-sensitivity');
         
-        const sizeIdx = sizeEl ? parseInt(sizeEl.value) || 0 : 2;
-        this.gridSize = sizes[sizeIdx] || 1024;
-
         const initialParams = {
+            slopeMag: slopeMagEl ? parseInt(slopeMagEl.value) : undefined,
+            slopeDir: slopeDirEl ? parseInt(slopeDirEl.value) : undefined,
+            octaves: octEl ? parseInt(octEl.value) : undefined,
+            gain: gainEl ? parseFloat(gainEl.value) : undefined,
+            initialWaterLevel: waterEl ? parseFloat(waterEl.value) : undefined,
+
             rainRate: rainEl ? parseFloat(rainEl.value) : undefined,
             evaporationRate: evapEl ? parseFloat(evapEl.value) : undefined,
             erosionRate: erodeEl ? parseFloat(erodeEl.value) : undefined,
             depositionRate: depositEl ? parseFloat(depositEl.value) : undefined,
-            octaves: octEl ? parseInt(octEl.value) : undefined,
-            gain: gainEl ? parseFloat(gainEl.value) : undefined,
-            initialWaterLevel: waterEl ? parseFloat(waterEl.value) : undefined,
+
             viewSensitivity: sensEl ? parseFloat(sensEl.value) : undefined
         };
 
@@ -128,6 +140,40 @@ class App {
         const initGain = parseFloat(gainEl.value);
         this.simulation.params.gain = initGain;
         gainDisp.textContent = gainEl.value;
+
+        // Slope Magnitude Control
+        const slopeMagEl = document.getElementById('param-slope-mag');
+        const slopeMagDisp = document.getElementById('val-slope-mag');
+        slopeMagEl.onchange = (e) => {
+            const val = parseFloat(e.target.value);
+            this.simulation.params.slopeMag = val;
+            slopeMagDisp.textContent = val;
+            this.simulation.reset();
+            this.draw();
+        };
+        slopeMagEl.oninput = (e) => {
+            slopeMagDisp.textContent = e.target.value;
+        };
+        // Initialize slope mag
+        this.simulation.params.slopeMag = parseFloat(slopeMagEl.value);
+        slopeMagDisp.textContent = slopeMagEl.value;
+
+        // Slope Direction Control
+        const slopeDirEl = document.getElementById('param-slope-dir');
+        const slopeDirDisp = document.getElementById('val-slope-dir');
+        slopeDirEl.onchange = (e) => {
+            const val = parseFloat(e.target.value);
+            this.simulation.params.slopeDir = val;
+            slopeDirDisp.textContent = val;
+            this.simulation.reset();
+            this.draw();
+        };
+        slopeDirEl.oninput = (e) => {
+            slopeDirDisp.textContent = e.target.value;
+        };
+        // Initialize slope dir
+        this.simulation.params.slopeDir = parseFloat(slopeDirEl.value);
+        slopeDirDisp.textContent = slopeDirEl.value;
 
         // Map Size Control
         const sizeEl = document.getElementById('param-size');
