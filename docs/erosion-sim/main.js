@@ -24,6 +24,8 @@ class App {
         const evapEl = document.getElementById('param-evap');
         const erodeEl = document.getElementById('param-erode');
         const depositEl = document.getElementById('param-deposit');
+        const thermalThresholdEl = document.getElementById('param-ravine-erosion-threshold');
+        const thermalRateEl = document.getElementById('param-ravine-erosion-rate');
 
         // view modes
         const sensEl = document.getElementById('param-sensitivity');
@@ -39,6 +41,8 @@ class App {
             evaporationRate: evapEl ? parseFloat(evapEl.value) : undefined,
             erosionRate: erodeEl ? parseFloat(erodeEl.value) : undefined,
             depositionRate: depositEl ? parseFloat(depositEl.value) : undefined,
+            thermalErosionThreshold: thermalThresholdEl ? parseFloat(thermalThresholdEl.value) : undefined,
+            thermalErosionRate: thermalRateEl ? parseFloat(thermalRateEl.value) : undefined,
 
             viewSensitivity: sensEl ? parseFloat(sensEl.value) : undefined
         };
@@ -89,6 +93,8 @@ class App {
         bindParam('param-evap', 'evaporationRate');
         bindParam('param-erode', 'erosionRate');
         bindParam('param-deposit', 'depositionRate');
+        bindParam('param-ravine-erosion-threshold', 'thermalErosionThreshold');
+        bindParam('param-ravine-erosion-rate', 'thermalErosionRate');
 
         // Speed Control
         const speedEl = document.getElementById('param-speed');
@@ -264,6 +270,8 @@ class App {
             `Evap: ${p.evaporationRate}`,
             `Erode: ${p.erosionRate}`,
             `Deposit: ${p.depositionRate}`,
+            `ThermThresh: ${p.thermalErosionThreshold}`,
+            `ThermRate: ${p.thermalErosionRate}`,
             `Speed: ${this.simSpeed}`,
             `Sens: ${p.viewSensitivity}`
         ];

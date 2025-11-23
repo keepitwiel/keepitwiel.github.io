@@ -148,6 +148,8 @@ uniform sampler2D u_velocity;
 uniform float u_dt;
 uniform float u_erosionRate;
 uniform float u_depositionRate;
+uniform float u_ravineErosionThreshold;
+uniform float u_ravineErosionRate;
 
 layout(location = 0) out vec4 outTerrain;
 layout(location = 1) out vec4 outSediment;
@@ -166,6 +168,18 @@ void main() {
     
     float newT = t;
     float newS = s;
+
+    // Thermal Erosion (Diffusion)
+    ivec2 size = textureSize(u_terrain, 0);
+    float tL = (coord.x > 0) ? texelFetch(u_terrain, coord + ivec2(-1, 0), 0).r : t;
+    float tR = (coord.x < size.x - 1) ? texelFetch(u_terrain, coord + ivec2(1, 0), 0).r : t;
+    float tT = (coord.y > 0) ? texelFetch(u_terrain, coord + ivec2(0, -1), 0).r : t;
+    float tB = (coord.y < size.y - 1) ? texelFetch(u_terrain, coord + ivec2(0, 1), 0).r : t;
+
+    vec4 neighbors = vec4(tL, tR, tT, tB);
+    vec4 heightDiffs = neighbors - t;
+    vec4 transfer = sign(heightDiffs) * max(vec4(0.0), abs(heightDiffs) - u_ravineErosionThreshold);
+    newT += dot(transfer, vec4(u_ravineErosionRate * u_dt));
     
     if (diff > 0.0) {
         // Erode
