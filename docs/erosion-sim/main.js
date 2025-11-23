@@ -57,13 +57,73 @@ class App {
 
         this.simSpeed = 10;
 
+        // Camera State
+        this.cameraState = {
+            azimuth: -Math.PI / 2,
+            elevation: Math.PI / 4,
+            distance: this.gridSize * 1.5,
+            target: [this.gridSize / 2, this.gridSize / 2, 0],
+            roll: 0
+        };
+        this.updateCamera();
+
         this.initUI();
+        this.initInput();
         this.resize();
 
         window.addEventListener('resize', () => this.resize());
 
         // Start loop
         requestAnimationFrame((t) => this.loop(t));
+    }
+
+    initInput() {
+        let isDragging = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        this.canvas.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            lastX = e.clientX;
+            lastY = e.clientY;
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const dx = e.clientX - lastX;
+            const dy = e.clientY - lastY;
+            lastX = e.clientX;
+            lastY = e.clientY;
+
+            // Orbit
+            this.cameraState.azimuth -= dx * 0.01;
+            this.cameraState.elevation = Math.max(0.01, Math.min(Math.PI / 2 - 0.01, this.cameraState.elevation + dy * 0.01));
+            
+            this.updateCamera();
+            if (!this.isRunning) this.draw();
+        });
+
+        this.canvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            this.cameraState.distance *= (1 + e.deltaY * 0.001);
+            this.updateCamera();
+            if (!this.isRunning) this.draw();
+        }, { passive: false });
+    }
+
+    updateCamera() {
+        const { azimuth, elevation, distance, target } = this.cameraState;
+        const x = target[0] + distance * Math.cos(elevation) * Math.cos(azimuth);
+        const y = target[1] + distance * Math.cos(elevation) * Math.sin(azimuth);
+        const z = target[2] + distance * Math.sin(elevation);
+        
+        this.simulation.params.cameraPos = [x, y, z];
+        this.simulation.params.cameraTarget = target;
+        this.simulation.params.cameraRoll = this.cameraState.roll;
     }
 
     initUI() {
@@ -205,6 +265,11 @@ class App {
             // Re-init simulation
             const oldParams = this.simulation.params;
             this.simulation = new GPUSimulation(this.canvas, this.gridSize, oldParams);
+
+            // Reset camera target
+            this.cameraState.target = [this.gridSize / 2, this.gridSize / 2, 0];
+            this.cameraState.distance = this.gridSize * 1.5;
+            this.updateCamera();
 
             this.resize();
         };

@@ -32,6 +32,10 @@ export class GPUSimulation {
             slopeDir: 0,
             initialWaterLevel: 0,
             viewSensitivity: 10,
+            cameraPos: [size/2, -size/2, size/2],
+            cameraTarget: [size/2, size/2, 0],
+            fov: 60.0,
+            cameraRoll: 0.0,
             ...initialParams
         };
 
@@ -386,6 +390,12 @@ export class GPUSimulation {
         gl.uniform1i(gl.getUniformLocation(this.programs.render, 'u_viewMode'), mode);
         gl.uniform1f(gl.getUniformLocation(this.programs.render, 'u_viewSensitivity'), this.params.viewSensitivity);
         gl.uniform2fv(gl.getUniformLocation(this.programs.render, 'u_size'), [this.size, this.size]);
+        gl.uniform2fv(gl.getUniformLocation(this.programs.render, 'u_resolution'), [this.canvas.width, this.canvas.height]);
+        
+        gl.uniform3fv(gl.getUniformLocation(this.programs.render, 'u_cameraPos'), this.params.cameraPos);
+        gl.uniform3fv(gl.getUniformLocation(this.programs.render, 'u_cameraTarget'), this.params.cameraTarget);
+        gl.uniform1f(gl.getUniformLocation(this.programs.render, 'u_fov'), this.params.fov);
+        gl.uniform1f(gl.getUniformLocation(this.programs.render, 'u_cameraRoll'), this.params.cameraRoll);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.quadBuffer);
         gl.enableVertexAttribArray(0);
