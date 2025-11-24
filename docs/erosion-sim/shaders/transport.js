@@ -1,13 +1,14 @@
 export const TRANSPORT_SHADER = `#version 300 es
 precision highp float;
-uniform sampler2D u_sediment;
-uniform sampler2D u_velocity;
-uniform float u_dt;
-uniform vec2 u_size;
+uniform sampler2D u_sediment;   // Suspended sediment amount (equivalent height in meters)
+uniform sampler2D u_velocity;   // Water velocity field (m/s)
+uniform float u_dt;             // Time step (s)
+uniform vec2 u_size;            // Grid dimensions (cells)
 
 out vec4 outColor;
 
 void main() {
+    // copy sediment from previous (backtraced) position to current position
     vec2 coord = gl_FragCoord.xy;
     vec2 size = u_size;
     
