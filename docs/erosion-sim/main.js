@@ -54,6 +54,7 @@ class App {
         this.lastTime = 0;
         this.frameCount = 0;
         this.lastFpsTime = 0;
+        this.lastStatsTime = 0;
 
         this.simSpeed = 10;
 
@@ -376,6 +377,16 @@ class App {
             document.getElementById('fps-counter').textContent = this.frameCount;
             this.frameCount = 0;
             this.lastFpsTime = timestamp;
+        }
+
+        // Stats (every 500ms)
+        if (timestamp - this.lastStatsTime >= 500) {
+            const stats = this.simulation.calculateStats();
+            document.getElementById('stat-water').textContent = stats.water.toFixed(2);
+            document.getElementById('stat-sediment').textContent = stats.sediment.toFixed(2);
+            document.getElementById('stat-terrain').textContent = stats.terrain.toFixed(2);
+            document.getElementById('stat-sum').textContent = (stats.terrain + stats.sediment).toFixed(0);
+            this.lastStatsTime = timestamp;
         }
 
         requestAnimationFrame((t) => this.loop(t));

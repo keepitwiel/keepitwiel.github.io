@@ -93,6 +93,7 @@ export class GPUSimulation {
         this.programs.erosion = this.createProgram(vs, Shaders.EROSION_SHADER);
         this.programs.transport = this.createProgram(vs, Shaders.TRANSPORT_SHADER);
         this.programs.render = this.createProgram(vs, Shaders.RENDER_SHADER);
+        this.programs.stats = this.createProgram(vs, Shaders.STATS_SHADER);
     }
 
     createTexture() {
@@ -122,10 +123,19 @@ export class GPUSimulation {
         this.textures.fluxB = this.createTexture();
 
         this.textures.velocity = this.createTexture(); // No ping-pong needed usually, but maybe for consistency
+
+        // Stats texture (small)
+        this.statsSize = 32;
+        this.textures.stats = this.gl.createTexture();
+        this.gl.bindTexture(this.gl.TEXTURE_2D, this.textures.stats);
+        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA32F, this.statsSize, this.statsSize, 0, this.gl.RGBA, this.gl.FLOAT, null);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.NEAREST);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.NEAREST);
     }
 
     initFramebuffers() {
         this.framebuffers.sim = this.gl.createFramebuffer();
+        this.framebuffers.stats = this.gl.createFramebuffer();
     }
 
     reset() {
@@ -401,5 +411,55 @@ export class GPUSimulation {
         gl.enableVertexAttribArray(0);
         gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    }
+
+    calculateStats() {
+        const gl = this.gl;
+        gl.useProgram(this.programs.stats);
+
+        // Bind inputs
+        gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, this.textures.terrainA);
+        gl.uniform1i(gl.getUniformLocation(this.programs.stats, 'u_terrain'), 0);
+
+        gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, this.textures.waterA);
+        gl.uniform1i(gl.getUniformLocation(this.programs.stats, 'u_water'), 1);
+
+        gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, this.textures.sedimentA);
+        gl.uniform1i(gl.getUniformLocation(this.programs.stats, 'u_sediment'), 2);
+
+        gl.uniform2fv(gl.getUniformLocation(this.programs.stats, 'u_resolution'), [this.size, this.size]);
+        gl.uniform2fv(gl.getUniformLocation(this.programs.stats, 'u_targetResolution'), [this.statsSize, this.statsSize]);
+
+        // Bind output
+        gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffers.stats);
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.textures.stats, 0);
+        gl.viewport(0, 0, this.statsSize, this.statsSize);
+
+        // Draw
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.quadBuffer);
+        gl.enableVertexAttribArray(0);
+        gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+        // Read pixels
+        const pixels = new Float32Array(this.statsSize * this.statsSize * 4);
+        gl.readPixels(0, 0, this.statsSize, this.statsSize, gl.RGBA, gl.FLOAT, pixels);
+
+        // Sum on CPU
+        let totalTerrain = 0;
+        let totalWater = 0;
+        let totalSediment = 0;
+
+        for (let i = 0; i < pixels.length; i += 4) {
+            totalTerrain += pixels[i];
+            totalWater += pixels[i + 1];
+            totalSediment += pixels[i + 2];
+        }
+
+        return {
+            terrain: totalTerrain,
+            water: totalWater,
+            sediment: totalSediment
+        };
     }
 }
