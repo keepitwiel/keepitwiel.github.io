@@ -1,4 +1,4 @@
-import * as Shaders from './shaders.js';
+import * as Shaders from './shaders/index.js';
 
 export class GPUSimulation {
     constructor(canvas, size, initialParams = {}) {
