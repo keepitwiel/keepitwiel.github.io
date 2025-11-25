@@ -4,6 +4,5 @@ export * from './flux.js';
 export * from './water.js';
 export * from './velocity.js';
 export * from './erosion.js';
-export * from './transport.js';
 export * from './render.js';
 export * from './stats.js';

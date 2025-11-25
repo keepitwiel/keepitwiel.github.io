@@ -91,7 +91,6 @@ export class GPUSimulation {
         this.programs.water = this.createProgram(vs, Shaders.WATER_SHADER);
         this.programs.velocity = this.createProgram(vs, Shaders.VELOCITY_SHADER);
         this.programs.erosion = this.createProgram(vs, Shaders.EROSION_SHADER);
-        this.programs.transport = this.createProgram(vs, Shaders.TRANSPORT_SHADER);
         this.programs.render = this.createProgram(vs, Shaders.RENDER_SHADER);
         this.programs.stats = this.createProgram(vs, Shaders.STATS_SHADER);
     }
@@ -309,6 +308,7 @@ export class GPUSimulation {
         this.runPass(this.programs.flux, {
             u_terrain: this.textures.terrainA,
             u_water: this.textures.waterA,
+            u_sediment: this.textures.sedimentA,
             u_flux: this.textures.fluxA
         }, this.textures.fluxB, {
             u_dt: p.dt,
@@ -321,13 +321,15 @@ export class GPUSimulation {
         // 3. Water Update (WaterA -> WaterB)
         this.runPass(this.programs.water, {
             u_water: this.textures.waterA,
+            u_sediment: this.textures.sedimentA,
             u_flux: this.textures.fluxA
-        }, this.textures.waterB, {
+        }, [this.textures.waterB, this.textures.sedimentB], {
             u_dt: p.dt,
             u_evapRate: p.evaporationRate,
             u_size: [this.size, this.size]
         });
         this.swap('water');
+        this.swap('sediment');
 
         // 4. Velocity (Velocity)
         this.runPass(this.programs.velocity, {
@@ -350,16 +352,6 @@ export class GPUSimulation {
             u_ravineErosionRate: p.thermalErosionRate
         });
         this.swap('terrain');
-        this.swap('sediment');
-
-        // 6. Transport (SedimentA -> SedimentB)
-        this.runPass(this.programs.transport, {
-            u_sediment: this.textures.sedimentA,
-            u_velocity: this.textures.velocity
-        }, this.textures.sedimentB, {
-            u_dt: p.dt,
-            u_size: [this.size, this.size]
-        });
         this.swap('sediment');
     }
 
