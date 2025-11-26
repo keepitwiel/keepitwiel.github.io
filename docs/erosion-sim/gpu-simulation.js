@@ -20,8 +20,6 @@ export class GPUSimulation {
             evaporationRate: 0.001,
             erosionRate: 0.01,
             depositionRate: 0.01,
-            thermalErosionThreshold: 0.1,
-            thermalErosionRate: 0.5,
             gravity: 9.8,
             pipeLength: 1.0,
             dt: 0.1,
@@ -348,8 +346,6 @@ export class GPUSimulation {
             u_dt: p.dt,
             u_erosionRate: p.erosionRate,
             u_depositionRate: p.depositionRate,
-            u_ravineErosionThreshold: p.thermalErosionThreshold,
-            u_ravineErosionRate: p.thermalErosionRate
         });
         this.swap('terrain');
         this.swap('sediment');

@@ -47,6 +47,11 @@ float getSediment(vec2 p) {
     return texelFetch(u_sediment, ivec2(p), 0).r;
 }
 
+vec2 getVelocity(vec2 p) {
+    if (p.x < 0.0 || p.x > u_size.x || p.y < 0.0 || p.y > u_size.y) return vec2(0.0);
+    return texelFetch(u_velocity, ivec2(p), 0).xy;
+}
+
 vec2 boxIntersection(vec3 ro, vec3 rd, vec3 boxMin, vec3 boxMax) {
     vec3 m = 1.0 / rd;
     vec3 n = m * ro;
@@ -74,88 +79,77 @@ vec3 getNormal(vec2 p) {
 }
 
 void main() {
-    if (u_viewMode == COMPOSITE_VIEW) {
-        // 3D Raymarching
-        vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution) / u_resolution.y;
+    // 3D Raymarching
+    vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution) / u_resolution.y;
+    
+    // Camera setup
+    vec3 ro = u_cameraPos;
+    vec3 ta = u_cameraTarget;
+    
+    vec3 ww = normalize(ta - ro);
+    vec3 uu = normalize(cross(ww, vec3(0.0, 0.0, 1.0)));
+    vec3 vv = normalize(cross(uu, ww));
+    
+    // Apply roll
+    float ca = cos(u_cameraRoll);
+    float sa = sin(u_cameraRoll);
+    vec3 nu = ca * uu + sa * vv;
+    vec3 nv = -sa * uu + ca * vv;
+    uu = nu; vv = nv;
+    
+    float f = 1.0 / tan(radians(u_fov) * 0.5);
+    vec3 rd = normalize(uv.x * uu + uv.y * vv + f * ww);
+    
+    vec3 col = vec3(0.5, 0.7, 0.9); // Sky
+    
+    // Intersect bounding box
+    vec3 boxMin = vec3(0.0, 0.0, -100.0);
+    vec3 boxMax = vec3(u_size.x, u_size.y, 300.0);
+    
+    vec2 tBox = boxIntersection(ro, rd, boxMin, boxMax);
+    
+    if (tBox.y > 0.0) {
+        float t = max(0.0, tBox.x);
+        float tMax = tBox.y;
         
-        // Camera setup
-        vec3 ro = u_cameraPos;
-        vec3 ta = u_cameraTarget;
+        bool hit = false;
+        vec3 p;
         
-        vec3 ww = normalize(ta - ro);
-        vec3 uu = normalize(cross(ww, vec3(0.0, 0.0, 1.0)));
-        vec3 vv = normalize(cross(uu, ww));
-        
-        // Apply roll
-        float ca = cos(u_cameraRoll);
-        float sa = sin(u_cameraRoll);
-        vec3 nu = ca * uu + sa * vv;
-        vec3 nv = -sa * uu + ca * vv;
-        uu = nu; vv = nv;
-        
-        float f = 1.0 / tan(radians(u_fov) * 0.5);
-        vec3 rd = normalize(uv.x * uu + uv.y * vv + f * ww);
-        
-        vec3 col = vec3(0.5, 0.7, 0.9); // Sky
-        
-        // Intersect bounding box
-        // Terrain is 0..size.x, 0..size.y. Height is roughly -50..200?
-        vec3 boxMin = vec3(0.0, 0.0, -100.0);
-        vec3 boxMax = vec3(u_size.x, u_size.y, 300.0);
-        
-        vec2 tBox = boxIntersection(ro, rd, boxMin, boxMax);
-        
-        if (tBox.y > 0.0) {
-            float t = max(0.0, tBox.x);
-            float tMax = tBox.y;
+        for(int i = 0; i < MAX_STEPS; i++) {
+            p = ro + rd * t;
+            if (t > tMax) break;
             
-            // Dither start to reduce banding
-            // t += fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453) * 0.5;
-
-            bool hit = false;
-            vec3 p;
+            float h = getTerrainHeight(p.xy);
+            float w = getWaterHeight(p.xy);
+            float s = getSediment(p.xy);
+            float surfaceH = h + w + s;
             
-            for(int i = 0; i < MAX_STEPS; i++) {
+            if (p.z < surfaceH) {
+                hit = true;
+                t -= 0.5;
                 p = ro + rd * t;
-                if (t > tMax) break;
-                
-                float h = getTerrainHeight(p.xy);
-                float w = getWaterHeight(p.xy);
-                float s = getSediment(p.xy);
-                float surfaceH = h + w + s;
-                
-                if (p.z < surfaceH) {
-                    hit = true;
-                    // Binary search refinement
-                    float t0 = t - 1.0; // Assume step was small enough or backtrack
-                    // Actually, we should store prevT.
-                    // Simple linear interpolation refinement
-                    // p_prev was above, p is below.
-                    // Let's just take p as hit for now or do one step back
-                    t -= 0.5;
-                    p = ro + rd * t;
-                    break;
-                }
-                
-                // Step size
-                // If we are high above, step larger
-                float heightDiff = p.z - surfaceH;
-                float dt = max(1.0, heightDiff * 0.4);
-                t += dt;
+                break;
             }
             
-            if (hit) {
-                // Shading
-                float h = getTerrainHeight(p.xy);
-                float w = getWaterHeight(p.xy);
-                float s = getSediment(p.xy);
-                float fl = w + s; // fluid height
-
+            float heightDiff = p.z - surfaceH;
+            float dt = max(1.0, heightDiff * 0.4);
+            t += dt;
+        }
+        
+        if (hit) {
+            // Shading
+            float h = getTerrainHeight(p.xy);
+            float w = getWaterHeight(p.xy);
+            float s = getSediment(p.xy);
+            vec2 v = getVelocity(p.xy);
+            float fl = w + s; // fluid height
+            
+            if (u_viewMode == COMPOSITE_VIEW) {
                 vec3 n = getNormal(p.xy);
                 vec3 lightDir = normalize(vec3(-1.0, -1.0, 1.0));
                 float diff = max(0.0, dot(n, lightDir));
                 float ambient = 0.2;
-                
+
                 // Terrain color
                 float hNorm = h / 100.0;
                 vec3 terrainColor;
@@ -169,10 +163,8 @@ void main() {
                 if (fl > 0.1) {
                     float fr = s / fl;
                     float depth = min(1.0, fl * 0.5);
-                    //float sed = min(1.0, s * 5.0);
                     vec3 waterColor = mix(vec3(0.2, 0.4, 0.8), vec3(0.4, 0.3, 0.1), fr);
                     
-                    // Water normal (flat for now, or perturbed)
                     vec3 wn = vec3(0.0, 0.0, 1.0);
                     float wDiff = max(0.0, dot(wn, lightDir));
                     float wSpec = pow(max(0.0, dot(reflect(-lightDir, wn), -rd)), 50.0);
@@ -180,45 +172,28 @@ void main() {
                     float alpha = min(0.9, 0.3 + depth * 0.6);
                     col = mix(col, waterColor * (ambient + wDiff) + vec3(wSpec), alpha);
                 }
-                
                 // Fog
                 float fog = 1.0 - exp(-t * 0.0005);
                 col = mix(col, vec3(0.5, 0.7, 0.9), fog);
+
+            } else if (u_viewMode == HEIGHT_VIEW) {
+                float val = h / 100.0;
+            } else if (u_viewMode == WATER_VIEW) {
+                if (w < u_viewSensitivity) {
+                    col = mix(vec3(0.0), lightOrange, w / u_viewSensitivity);
+                } else {
+                    float t = 1.0 - exp(-(w - u_viewSensitivity) * u_viewSensitivity);
+                    col = mix(lightOrange, darkBlue, t);
+                }
+            } else if (u_viewMode == SEDIMENT_VIEW) {
+                float val = s * u_viewSensitivity * 100.0;
+                col = vec3(val, val * 0.5, 0.0);
+            } else if (u_viewMode == VELOCITY_VIEW) {
+                vec2 vn = v * u_viewSensitivity;
+                col = vec3(length(vn), 0.5 + vn.x, 0.5 + vn.y);
             }
         }
-        
-        outColor = vec4(col, 1.0);
-        
-    } else {
-        // 2D Views
-        vec2 uv = gl_FragCoord.xy / u_size;
-        ivec2 coord = ivec2(gl_FragCoord.xy);
-        
-        float h = texelFetch(u_terrain, coord, 0).r;
-        float w = texelFetch(u_water, coord, 0).r;
-        float s = texelFetch(u_sediment, coord, 0).r;
-        vec2 v = texelFetch(u_velocity, coord, 0).xy;
-        
-        vec3 color = vec3(0.0);
-        
-        if (u_viewMode == HEIGHT_VIEW) {
-            float val = h / 100.0;
-            color = vec3(val);
-        } else if (u_viewMode == WATER_VIEW) {
-            if (w < u_viewSensitivity) {
-                color = mix(vec3(0.0), lightOrange, w / u_viewSensitivity);
-            } else {
-                float t = 1.0 - exp(-(w - u_viewSensitivity) * u_viewSensitivity);
-                color = mix(lightOrange, darkBlue, t);
-            }
-        } else if (u_viewMode == SEDIMENT_VIEW) {
-            float val = s * u_viewSensitivity * 100.0;
-            color = vec3(val, val * 0.5, 0.0);
-        } else if (u_viewMode == VELOCITY_VIEW) {
-            vec2 vn = v * u_viewSensitivity;
-            color = vec3(length(vn), 0.5 + vn.x, 0.5 + vn.y);
-        }
-        
-        outColor = vec4(color, 1.0);
     }
+    
+    outColor = vec4(col, 1.0);
 }`;
