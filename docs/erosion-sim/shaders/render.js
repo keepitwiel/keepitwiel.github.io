@@ -121,7 +121,8 @@ void main() {
                 
                 float h = getTerrainHeight(p.xy);
                 float w = getWaterHeight(p.xy);
-                float surfaceH = h + w;
+                float s = getSediment(p.xy);
+                float surfaceH = h + w + s;
                 
                 if (p.z < surfaceH) {
                     hit = true;
@@ -148,7 +149,8 @@ void main() {
                 float h = getTerrainHeight(p.xy);
                 float w = getWaterHeight(p.xy);
                 float s = getSediment(p.xy);
-                
+                float fl = w + s; // fluid height
+
                 vec3 n = getNormal(p.xy);
                 vec3 lightDir = normalize(vec3(-1.0, -1.0, 1.0));
                 float diff = max(0.0, dot(n, lightDir));
@@ -163,11 +165,12 @@ void main() {
                 
                 col = terrainColor * (ambient + diff);
                 
-                // Water
-                if (w > 0.01) {
-                    float depth = min(1.0, w * 0.5);
-                    float sed = min(1.0, s * 5.0);
-                    vec3 waterColor = mix(vec3(0.2, 0.4, 0.8), vec3(0.4, 0.3, 0.1), sed);
+                // fluid
+                if (fl > 0.1) {
+                    float fr = s / fl;
+                    float depth = min(1.0, fl * 0.5);
+                    //float sed = min(1.0, s * 5.0);
+                    vec3 waterColor = mix(vec3(0.2, 0.4, 0.8), vec3(0.4, 0.3, 0.1), fr);
                     
                     // Water normal (flat for now, or perturbed)
                     vec3 wn = vec3(0.0, 0.0, 1.0);
