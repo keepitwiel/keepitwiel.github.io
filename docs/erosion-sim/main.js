@@ -308,6 +308,12 @@ class App {
             this.updateStatus();
         };
 
+        // Toggle Status Bar
+        document.getElementById('btn-toggle-status').onclick = () => {
+            const el = document.getElementById('status');
+            el.style.display = el.style.display === 'none' ? 'block' : 'none';
+        };
+
         // Collapsible groups
         document.querySelectorAll('.control-supergroup-header').forEach(header => {
             header.addEventListener('click', () => {
@@ -322,17 +328,31 @@ class App {
         const mode = document.getElementById('view-mode').value;
         const s = this.isRunning ? 'Running' : 'Paused';
         const p = this.simulation.params;
+        const stats = this.simulation.calculateStats();
         const parts = [
             `${s}`,
+            `PARAMETERS`,
+            `----------`,
             `Mode: ${mode}`,
             `Rain: ${p.rainRate}`,
             `Evap: ${p.evaporationRate}`,
             `Erode: ${p.erosionRate}`,
             `Deposit: ${p.depositionRate}`,
             `Speed: ${this.simSpeed}`,
-            `Sens: ${p.viewSensitivity}`
+            `Sens: ${p.viewSensitivity}`,
+            `Octaves: ${p.octaves}`,
+            `Gain: ${p.gain}`,
+            `Slope Mag: ${p.slopeMag}`,
+            `Slope Dir: ${p.slopeDir}`,
+            `Water: ${p.initialWaterLevel}`,
+            `STATISTICS`,
+            `----------`,
+            `Water total:        ${stats.water.toFixed(0)}`,
+            `Terrain total:      ${stats.terrain.toFixed(0)}`,
+            `Sediment total:     ${stats.sediment.toFixed(0)}`,
+            `Terrain + sediment: ${(stats.terrain + stats.sediment).toFixed(0)}`,
         ];
-        el.textContent = parts.join(' • ');
+        el.innerText = parts.join('\n');
     }
 
     resize() {
@@ -370,13 +390,9 @@ class App {
             this.lastFpsTime = timestamp;
         }
 
-        // Stats (every 500ms)
+        // update status (every 500ms)
         if (timestamp - this.lastStatsTime >= 500) {
-            const stats = this.simulation.calculateStats();
-            document.getElementById('stat-water').textContent = stats.water.toFixed(2);
-            document.getElementById('stat-sediment').textContent = stats.sediment.toFixed(2);
-            document.getElementById('stat-terrain').textContent = stats.terrain.toFixed(2);
-            document.getElementById('stat-sum').textContent = (stats.terrain + stats.sediment).toFixed(0);
+            this.updateStatus();
             this.lastStatsTime = timestamp;
         }
 
