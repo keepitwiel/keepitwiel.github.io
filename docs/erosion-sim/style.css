@@ -258,3 +258,38 @@ select {
 .splash-content button:hover {
     background: #3a8eef;
 }
+
+/* Popup Panel */
+.popup-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    padding: 20px;
+    border-radius: 8px;
+    z-index: 1500;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    min-width: 350px;
+    color: var(--text-color);
+}
+
+.popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+}
+
+.popup-header h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--accent-color);
+}
+
+.popup-panel .control-group {
+    margin-bottom: 12px;
+}

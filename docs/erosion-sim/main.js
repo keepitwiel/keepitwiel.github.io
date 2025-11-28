@@ -415,6 +415,22 @@ class App {
                 header.parentElement.classList.toggle('collapsed');
             });
         });
+
+        // Map Gen Popup
+        const mapGenBtn = document.getElementById('btn-map-gen');
+        const mapGenPopup = document.getElementById('map-gen-popup');
+        const closeMapGenBtn = document.getElementById('btn-close-map-gen');
+
+        if (mapGenBtn && mapGenPopup) {
+            mapGenBtn.onclick = () => {
+                mapGenPopup.style.display = 'block';
+            };
+        }
+        if (closeMapGenBtn && mapGenPopup) {
+            closeMapGenBtn.onclick = () => {
+                mapGenPopup.style.display = 'none';
+            };
+        }
     }
 
     updateStatus() {
