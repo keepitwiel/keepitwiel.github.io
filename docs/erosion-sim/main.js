@@ -56,12 +56,12 @@ class App {
 
         // Camera State
         this.cameraState = {
-            azimuth: -Math.PI / 2,
-            elevation: Math.PI / 4,
-            distance: this.gridSize * 1.5,
-            target: [this.gridSize / 2, this.gridSize / 2, 0],
+            position: [this.gridSize / 2, -this.gridSize * 0.2, this.gridSize * 0.5],
+            yaw: Math.PI / 2, // Looking North
+            pitch: -Math.PI / 6, // Looking slightly down
             roll: 0
         };
+        this.keys = { w: false, a: false, s: false, d: false, q: false, e: false, shift: false };
         this.updateCamera();
 
         this.initUI();
@@ -96,31 +96,108 @@ class App {
             lastX = e.clientX;
             lastY = e.clientY;
 
-            // Orbit
-            this.cameraState.azimuth -= dx * 0.01;
-            this.cameraState.elevation = Math.max(0.01, Math.min(Math.PI / 2 - 0.01, this.cameraState.elevation + dy * 0.01));
+            const sensitivity = 0.005;
+            this.cameraState.yaw -= dx * sensitivity;
+            this.cameraState.pitch -= dy * sensitivity;
             
+            // Clamp pitch
+            const maxPitch = Math.PI / 2 - 0.01;
+            this.cameraState.pitch = Math.max(-maxPitch, Math.min(maxPitch, this.cameraState.pitch));
+
             this.updateCamera();
-            if (!this.isRunning) this.draw();
+            if (!this.isRunning) {
+                 this.draw();
+            }
         });
 
-        this.canvas.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            this.cameraState.distance *= (1 + e.deltaY * 0.001);
-            this.updateCamera();
-            if (!this.isRunning) this.draw();
-        }, { passive: false });
+        window.addEventListener('keydown', (e) => {
+            const key = e.key.toLowerCase();
+            if (this.keys.hasOwnProperty(key)) this.keys[key] = true;
+            this.keys.shift = e.shiftKey;
+        });
+        
+        window.addEventListener('keyup', (e) => {
+            const key = e.key.toLowerCase();
+            if (this.keys.hasOwnProperty(key)) this.keys[key] = false;
+            this.keys.shift = e.shiftKey;
+        });
     }
 
     updateCamera() {
-        const { azimuth, elevation, distance, target } = this.cameraState;
-        const x = target[0] + distance * Math.cos(elevation) * Math.cos(azimuth);
-        const y = target[1] + distance * Math.cos(elevation) * Math.sin(azimuth);
-        const z = target[2] + distance * Math.sin(elevation);
+        const { position, yaw, pitch } = this.cameraState;
         
-        this.simulation.params.cameraPos = [x, y, z];
+        // Calculate forward vector from yaw/pitch
+        const cosPitch = Math.cos(pitch);
+        const sinPitch = Math.sin(pitch);
+        const cosYaw = Math.cos(yaw);
+        const sinYaw = Math.sin(yaw);
+        
+        const forward = [
+            cosPitch * cosYaw,
+            cosPitch * sinYaw,
+            sinPitch
+        ];
+        
+        const target = [
+            position[0] + forward[0],
+            position[1] + forward[1],
+            position[2] + forward[2]
+        ];
+
+        this.simulation.params.cameraPos = position;
         this.simulation.params.cameraTarget = target;
         this.simulation.params.cameraRoll = this.cameraState.roll;
+    }
+
+    processInput(dt) {
+        // Movement speed
+        const baseSpeed = this.gridSize * 0.5; // Units per second
+        const moveSpeed = (this.keys.shift ? 4.0 : 1.0) * baseSpeed * (dt / 1000.0);
+
+        const { yaw } = this.cameraState;
+        const c = Math.cos(yaw);
+        const s = Math.sin(yaw);
+        
+        // Forward vector on XY plane
+        const forward = [c, s, 0];
+        const right = [s, -c, 0];
+        
+        let moved = false;
+
+        if (this.keys.w) {
+            this.cameraState.position[0] += forward[0] * moveSpeed;
+            this.cameraState.position[1] += forward[1] * moveSpeed;
+            this.cameraState.position[2] += forward[2] * moveSpeed;
+            moved = true;
+        }
+        if (this.keys.s) {
+            this.cameraState.position[0] -= forward[0] * moveSpeed;
+            this.cameraState.position[1] -= forward[1] * moveSpeed;
+            this.cameraState.position[2] -= forward[2] * moveSpeed;
+            moved = true;
+        }
+        if (this.keys.a) {
+            this.cameraState.position[0] -= right[0] * moveSpeed;
+            this.cameraState.position[1] -= right[1] * moveSpeed;
+            moved = true;
+        }
+        if (this.keys.d) {
+            this.cameraState.position[0] += right[0] * moveSpeed;
+            this.cameraState.position[1] += right[1] * moveSpeed;
+            moved = true;
+        }
+        if (this.keys.e) {
+            this.cameraState.position[2] += moveSpeed;
+            moved = true;
+        }
+        if (this.keys.q) {
+            this.cameraState.position[2] -= moveSpeed;
+            moved = true;
+        }
+        
+        if (moved) {
+            this.updateCamera();
+        }
     }
 
     initUI() {
@@ -329,8 +406,19 @@ class App {
         const s = this.isRunning ? 'Running' : 'Paused';
         const p = this.simulation.params;
         const stats = this.simulation.calculateStats();
+        
+        const camPos = this.cameraState.position.map(v => v.toFixed(1)).join(', ');
+        const camYaw = (this.cameraState.yaw * 180 / Math.PI).toFixed(1);
+        const camPitch = (this.cameraState.pitch * 180 / Math.PI).toFixed(1);
+
         const parts = [
             `STATUS:           ${s}`,
+            ``,
+            `CAMERA`,
+            `----------`,
+            `Position:         [${camPos}]`,
+            `Yaw:              ${camYaw}°`,
+            `Pitch:            ${camPitch}°`,
             ``,
             `PARAMETERS`,
             `----------`,
@@ -375,6 +463,8 @@ class App {
     loop(timestamp) {
         const dt = timestamp - this.lastTime;
         this.lastTime = timestamp;
+
+        this.processInput(dt);
 
         if (this.isRunning) {
             for (let i = 0; i < this.simSpeed; i++) {
