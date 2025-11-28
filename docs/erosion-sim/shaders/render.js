@@ -78,6 +78,36 @@ vec3 getNormal(vec2 p) {
     return normalize(vec3(hL - hR, hT - hB, 2.0));
 }
 
+bool rayMarch(vec2 tBox, vec3 ro, vec3 rd, out float t_out) {
+    float t = max(0.0, tBox.x);
+    float tMax = tBox.y;
+
+    bool res = false;
+    
+    for(int i = 0; i < MAX_STEPS; i++) {
+        if (t > tMax) break;
+        vec3 p = ro + rd * t;
+        
+        float h = getTerrainHeight(p.xy);
+        float w = getWaterHeight(p.xy);
+        float s = getSediment(p.xy);
+        float surfaceH = h + w + s;
+        
+        if (p.z < surfaceH) {
+            res = true;
+            t -= 0.5;
+            p = ro + rd * t;
+            break;
+        }
+        
+        float heightDiff = p.z - surfaceH;
+        float dt = max(1.0, heightDiff * 0.4);
+        t += dt;
+    }
+    t_out = t;
+    return res;
+}
+
 void main() {
     // 3D Raymarching
     vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution) / u_resolution.y;
@@ -109,35 +139,12 @@ void main() {
     vec2 tBox = boxIntersection(ro, rd, boxMin, boxMax);
     
     if (tBox.y > 0.0) {
-        float t = max(0.0, tBox.x);
-        float tMax = tBox.y;
-        
-        bool hit = false;
-        vec3 p;
-        
-        for(int i = 0; i < MAX_STEPS; i++) {
-            p = ro + rd * t;
-            if (t > tMax) break;
-            
-            float h = getTerrainHeight(p.xy);
-            float w = getWaterHeight(p.xy);
-            float s = getSediment(p.xy);
-            float surfaceH = h + w + s;
-            
-            if (p.z < surfaceH) {
-                hit = true;
-                t -= 0.5;
-                p = ro + rd * t;
-                break;
-            }
-            
-            float heightDiff = p.z - surfaceH;
-            float dt = max(1.0, heightDiff * 0.4);
-            t += dt;
-        }
+        float t;
+        bool hit = rayMarch(tBox, ro, rd, t);
         
         if (hit) {
             // Shading
+            vec3 p = ro + rd * t;
             float h = getTerrainHeight(p.xy);
             float w = getWaterHeight(p.xy);
             float s = getSediment(p.xy);
