@@ -67,6 +67,7 @@ class App {
         this.initUI();
         this.initInput();
         this.resize();
+        this.loadVersion();
 
         window.addEventListener('resize', () => this.resize());
 
@@ -442,6 +443,10 @@ class App {
             `Terrain total:      ${stats.terrain.toFixed(0)}`,
             `Sediment total:     ${stats.sediment.toFixed(0)}`,
             `Terrain + sediment: ${(stats.terrain + stats.sediment).toFixed(0)}`,
+            ``,
+            `VERSION`,
+            `----------`,
+            `${this.versionString || 'Loading...'}`,
         ];
         el.innerText = parts.join('\n');
     }
@@ -458,6 +463,22 @@ class App {
     draw() {
         const viewMode = document.getElementById('view-mode').value;
         this.simulation.draw(viewMode);
+    }
+
+    async loadVersion() {
+        try {
+            const response = await fetch('version.json');
+            const data = await response.json();
+            console.log(`Build: ${data.build} (${data.date})`);
+            
+            // Add version to status bar if it exists
+            const el = document.getElementById('status');
+            if (el) {
+                this.versionString = `Build: ${data.build}`;
+            }
+        } catch (e) {
+            console.warn('Could not load version info');
+        }
     }
 
     loop(timestamp) {
