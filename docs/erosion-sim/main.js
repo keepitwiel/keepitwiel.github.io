@@ -244,13 +244,6 @@ class App {
         // Octaves Control
         const octEl = document.getElementById('param-octaves');
         const octDisp = document.getElementById('val-octaves');
-        octEl.onchange = (e) => {
-            const val = parseInt(e.target.value);
-            this.simulation.params.octaves = val;
-            octDisp.textContent = val;
-            this.simulation.reset();
-            this.draw();
-        };
         octEl.oninput = (e) => {
             octDisp.textContent = e.target.value;
         };
@@ -264,13 +257,6 @@ class App {
         // Gain Control
         const gainEl = document.getElementById('param-gain');
         const gainDisp = document.getElementById('val-gain');
-        gainEl.onchange = (e) => {
-            const val = parseFloat(e.target.value);
-            this.simulation.params.gain = val;
-            gainDisp.textContent = val;
-            this.simulation.reset();
-            this.draw();
-        };
         gainEl.oninput = (e) => {
             gainDisp.textContent = e.target.value;
         };
@@ -282,13 +268,6 @@ class App {
         // Slope Magnitude Control
         const slopeMagEl = document.getElementById('param-slope-mag');
         const slopeMagDisp = document.getElementById('val-slope-mag');
-        slopeMagEl.onchange = (e) => {
-            const val = parseFloat(e.target.value);
-            this.simulation.params.slopeMag = val;
-            slopeMagDisp.textContent = val;
-            this.simulation.reset();
-            this.draw();
-        };
         slopeMagEl.oninput = (e) => {
             slopeMagDisp.textContent = e.target.value;
         };
@@ -299,13 +278,6 @@ class App {
         // Slope Direction Control
         const slopeDirEl = document.getElementById('param-slope-dir');
         const slopeDirDisp = document.getElementById('val-slope-dir');
-        slopeDirEl.onchange = (e) => {
-            const val = parseFloat(e.target.value);
-            this.simulation.params.slopeDir = val;
-            slopeDirDisp.textContent = val;
-            this.simulation.reset();
-            this.draw();
-        };
         slopeDirEl.oninput = (e) => {
             slopeDirDisp.textContent = e.target.value;
         };
@@ -329,35 +301,9 @@ class App {
         sizeEl.value = initSizeIdx;
         sizeDisp.textContent = `${sizes[initSizeIdx]}x${sizes[initSizeIdx]}`;
 
-        sizeEl.onchange = (e) => {
-            const idx = parseInt(e.target.value);
-            const newSize = sizes[idx];
-            this.gridSize = newSize;
-            sizeDisp.textContent = `${sizes[idx]}x${sizes[idx]}`;
-
-            // Re-init simulation
-            const oldParams = this.simulation.params;
-            this.simulation = new GPUSimulation(this.canvas, this.gridSize, oldParams);
-
-            // Reset camera target
-            this.cameraState.target = [this.gridSize / 2, this.gridSize / 2, 0];
-            this.cameraState.distance = this.gridSize * 1.5;
-            this.updateCamera();
-
-            this.resize();
-            this.updateStatus();
-        };
-
         // Water Level Control
         const waterEl = document.getElementById('param-water');
         const waterDisp = document.getElementById('val-water');
-        waterEl.onchange = (e) => {
-            const val = parseFloat(e.target.value);
-            this.simulation.params.initialWaterLevel = val;
-            waterDisp.textContent = val;
-            this.simulation.reset();
-            this.draw();
-        };
         waterEl.oninput = (e) => {
             waterDisp.textContent = e.target.value;
         };
@@ -429,6 +375,47 @@ class App {
         if (closeMapGenBtn && mapGenPopup) {
             closeMapGenBtn.onclick = () => {
                 mapGenPopup.style.display = 'none';
+            };
+        }
+
+        // Generate Map Button
+        const generateBtn = document.getElementById('btn-generate-map');
+        if (generateBtn) {
+            generateBtn.onclick = () => {
+                // Update params from UI
+                this.simulation.params.octaves = parseInt(octEl.value);
+                this.simulation.params.gain = parseFloat(gainEl.value);
+                this.simulation.params.slopeMag = parseFloat(slopeMagEl.value);
+                this.simulation.params.slopeDir = parseFloat(slopeDirEl.value);
+                this.simulation.params.initialWaterLevel = parseFloat(waterEl.value);
+
+                // Handle size change if needed
+                const sizeIdx = parseInt(sizeEl.value);
+                const newSize = sizes[sizeIdx];
+                
+                if (newSize !== this.gridSize) {
+                    this.gridSize = newSize;
+                    // Re-init simulation with new size
+                    const oldParams = this.simulation.params;
+                    this.simulation = new GPUSimulation(this.canvas, this.gridSize, oldParams);
+                    
+                    // Reset camera target
+                    this.cameraState.target = [this.gridSize / 2, this.gridSize / 2, 0];
+                    this.cameraState.distance = this.gridSize * 1.5;
+                    this.updateCamera();
+                    this.resize();
+                } else {
+                    // Just reset/regenerate with current size
+                    this.simulation.reset();
+                }
+                
+                this.draw();
+                this.updateStatus();
+                
+                // Close popup
+                if (mapGenPopup) {
+                    mapGenPopup.style.display = 'none';
+                }
             };
         }
     }
