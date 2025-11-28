@@ -21,7 +21,7 @@ export class GPUSimulation {
             erosionRate: 0.01,
             depositionRate: 0.01,
             gravity: 9.8,
-            pipeLength: 1.0,
+            pipeLength: 10.0,
             dt: 0.1,
             octaves: 10,
             gain: 0.55,
