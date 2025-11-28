@@ -160,7 +160,7 @@ void main() {
                 col = terrainColor * (ambient + diff);
                 
                 // fluid
-                if (fl > 0.1) {
+                if (fl >= 0.0) {
                     float fr = s / fl;
                     float depth = min(1.0, fl * 0.5);
                     vec3 waterColor = mix(vec3(0.2, 0.4, 0.8), vec3(0.4, 0.3, 0.1), fr);
