@@ -124,6 +124,7 @@
                     <div class="control-group">
                         <div class="button-row">
                             <button id="btn-toggle-status">Toggle Status Bar</button>
+                            <button id="btn-help">Help / Controls</button>
                         </div>
                     </div>
                 </div>
@@ -136,6 +137,21 @@
         </div>
         <div id="canvas-container">
             <canvas id="simCanvas"></canvas>
+        </div>
+    </div>
+    <div id="splash-screen" class="splash-screen">
+        <div class="splash-content">
+            <h2>Welcome to Erosion Sim</h2>
+            <p>Explore a GPU-accelerated hydraulic erosion simulation.</p>
+            <h3>Controls</h3>
+            <ul>
+                <li><strong>WASD</strong>: Move Camera</li>
+                <li><strong>Q / E</strong>: Move Up / Down</li>
+                <li><strong>Shift</strong>: Move Faster</li>
+                <li><strong>Mouse Drag</strong>: Look Around</li>
+            </ul>
+            <p>Click Help / Control in the side bar to see this popup screen.</p>
+            <button id="btn-close-splash">Close</button>
         </div>
     </div>
     <div id="status" class="status-bar" aria-live="polite" style="display: none;">Initializing…</div>

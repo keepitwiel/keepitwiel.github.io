@@ -392,6 +392,23 @@ class App {
             el.style.display = el.style.display === 'none' ? 'block' : 'none';
         };
 
+        // Splash Screen
+        const splash = document.getElementById('splash-screen');
+        const closeSplash = document.getElementById('btn-close-splash');
+        if (splash && closeSplash) {
+            closeSplash.onclick = () => {
+                splash.style.display = 'none';
+            };
+        }
+
+        // Help Button
+        const helpBtn = document.getElementById('btn-help');
+        if (helpBtn && splash) {
+            helpBtn.onclick = () => {
+                splash.style.display = 'flex';
+            };
+        }
+
         // Collapsible groups
         document.querySelectorAll('.control-supergroup-header').forEach(header => {
             header.addEventListener('click', () => {
