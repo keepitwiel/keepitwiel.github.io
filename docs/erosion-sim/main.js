@@ -203,12 +203,20 @@ class App {
 
     initUI() {
         // Buttons
-        document.getElementById('btn-start').onclick = () => { this.isRunning = true; this.updateStatus(); };
-        document.getElementById('btn-stop').onclick = () => { this.isRunning = false; this.updateStatus(); };
-        document.getElementById('btn-reset').onclick = () => {
-            this.simulation.reset();
-            this.draw();
-        };
+        const pauseBtn = document.getElementById('btn-pause');
+        if (pauseBtn) {
+            pauseBtn.onclick = () => {
+                this.isRunning = !this.isRunning;
+                if (this.isRunning) {
+                    pauseBtn.innerText = 'Pause';
+                    pauseBtn.classList.remove('active');
+                } else {
+                    pauseBtn.innerText = 'Paused';
+                    pauseBtn.classList.add('active');
+                }
+                this.updateStatus();
+            };
+        }
 
         // Parameters
         const bindParam = (id, targetProp) => {
