@@ -34,6 +34,7 @@ export class GPUSimulation {
             cameraTarget: [size/2, size/2, 0],
             fov: 60.0,
             cameraRoll: 0.0,
+            seed: 12345,
             ...initialParams
         };
 
@@ -155,11 +156,32 @@ export class GPUSimulation {
         const COS_R = Math.cos(ROTATION_ANGLE);
         const SIN_R = Math.sin(ROTATION_ANGLE);
 
+        // Seeded RNG
+        let seed = this.params.seed;
+        if (typeof seed === 'string') {
+            let h = 0x811c9dc5;
+            for (let i = 0; i < seed.length; i++) {
+                h ^= seed.charCodeAt(i);
+                h = Math.imul(h, 0x01000193);
+            }
+            seed = h >>> 0;
+        }
+        
+        const mulberry32 = (a) => {
+            return () => {
+                let t = a += 0x6D2B79F5;
+                t = Math.imul(t ^ t >>> 15, t | 1);
+                t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+                return ((t ^ t >>> 14) >>> 0) / 4294967296;
+            }
+        };
+        const random = mulberry32(seed);
+
         // Permutation table
         const perm = new Uint8Array(512);
         for (let i = 0; i < 256; i++) perm[i] = i;
         for (let i = 0; i < 256; i++) {
-            const j = Math.floor(Math.random() * 256);
+            const j = Math.floor(random() * 256);
             const t = perm[i];
             perm[i] = perm[j];
             perm[j] = t;

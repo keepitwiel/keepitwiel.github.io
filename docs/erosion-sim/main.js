@@ -43,6 +43,7 @@ class App {
             octaves: getVal('param-octaves', true),
             gain: getVal('param-gain'),
             initialWaterLevel: getVal('param-water'),
+            seed: document.getElementById('param-seed') ? document.getElementById('param-seed').value : '12345',
 
             rainRate: getVal('param-rain'),
             evaporationRate: getVal('param-evap'),
@@ -256,6 +257,17 @@ class App {
         if (generateBtn) {
             generateBtn.onclick = () => this.generateMap(mapGenPopup);
         }
+
+        // Random Seed Button
+        const randomSeedBtn = document.getElementById('btn-random-seed');
+        if (randomSeedBtn) {
+            randomSeedBtn.onclick = () => {
+                const seedEl = document.getElementById('param-seed');
+                if (seedEl) {
+                    seedEl.value = Math.floor(Math.random() * 1000000).toString();
+                }
+            };
+        }
     }
 
     generateMap(popup) {
@@ -270,6 +282,11 @@ class App {
         this.simulation.params.slopeMag = getVal('param-slope-mag');
         this.simulation.params.slopeDir = getVal('param-slope-dir');
         this.simulation.params.initialWaterLevel = getVal('param-water');
+        
+        const seedEl = document.getElementById('param-seed');
+        if (seedEl) {
+            this.simulation.params.seed = seedEl.value;
+        }
 
         // Handle size change
         const sizeIdx = getVal('param-size', true);
