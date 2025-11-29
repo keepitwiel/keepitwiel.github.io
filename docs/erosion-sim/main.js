@@ -341,10 +341,19 @@ class App {
         };
 
         // Toggle Status Bar
-        document.getElementById('btn-toggle-status').onclick = () => {
-            const el = document.getElementById('status');
-            el.style.display = el.style.display === 'none' ? 'block' : 'none';
-        };
+        const toggleStatusBtn = document.getElementById('btn-toggle-status');
+        if (toggleStatusBtn) {
+            toggleStatusBtn.onclick = () => {
+                const el = document.getElementById('status');
+                const isHidden = el.style.display === 'none';
+                el.style.display = isHidden ? 'block' : 'none';
+                if (isHidden) {
+                    toggleStatusBtn.classList.add('active');
+                } else {
+                    toggleStatusBtn.classList.remove('active');
+                }
+            };
+        }
 
         // Splash Screen
         const splash = document.getElementById('splash-screen');
