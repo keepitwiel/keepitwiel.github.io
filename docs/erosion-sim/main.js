@@ -3,76 +3,69 @@ import { GPUSimulation } from './gpu-simulation.js';
 class App {
     constructor() {
         this.canvas = document.getElementById('simCanvas');
-
-        // Simulation parameters - initialize from the controls in `index.html` when possible
-        const sizes = [256, 512, 1024, 2048];
-        // Read UI values (DOM is available because App is constructed after DOMContentLoaded)
-
-        // terrain generation
-        const sizeEl = document.getElementById('param-size');
-        const sizeIdx = sizeEl ? parseInt(sizeEl.value) || 0 : 3;
-        this.gridSize = sizes[sizeIdx] || 1024;
-
-        const slopeMagEl = document.getElementById('param-slope-mag');
-        const slopeDirEl = document.getElementById('param-slope-dir');
-        const octEl = document.getElementById('param-octaves');
-        const gainEl = document.getElementById('param-gain');
-        const waterEl = document.getElementById('param-water');
-
-        // physics
-        const rainEl = document.getElementById('param-rain');
-        const evapEl = document.getElementById('param-evap');
-        const erodeEl = document.getElementById('param-erode');
-        const depositEl = document.getElementById('param-deposit');
-
-        // view modes
-        const sensEl = document.getElementById('param-sensitivity');
+        this.sizes = [256, 512, 1024, 2048];
         
-        const initialParams = {
-            slopeMag: slopeMagEl ? parseFloat(slopeMagEl.value) : undefined,
-            slopeDir: slopeDirEl ? parseFloat(slopeDirEl.value) : undefined,
-            octaves: octEl ? parseInt(octEl.value) : undefined,
-            gain: gainEl ? parseFloat(gainEl.value) : undefined,
-            initialWaterLevel: waterEl ? parseFloat(waterEl.value) : undefined,
-
-            rainRate: rainEl ? parseFloat(rainEl.value) : undefined,
-            evaporationRate: evapEl ? parseFloat(evapEl.value) : undefined,
-            erosionRate: erodeEl ? parseFloat(erodeEl.value) : undefined,
-            depositionRate: depositEl ? parseFloat(depositEl.value) : undefined,
-
-            viewSensitivity: sensEl ? parseFloat(sensEl.value) : undefined
-        };
-
-        this.simulation = new GPUSimulation(this.canvas, this.gridSize, initialParams);
-
-        // Start running by default so the simulation begins on load
+        // State
         this.isRunning = true;
+        this.simSpeed = 10;
         this.lastTime = 0;
         this.frameCount = 0;
         this.lastFpsTime = 0;
         this.lastStatsTime = 0;
+        this.keys = { w: false, a: false, s: false, d: false, q: false, e: false, shift: false };
 
-        this.simSpeed = 10;
+        this.initSimulation();
+        this.initCamera();
+        this.initInput();
+        this.initUI();
+        
+        this.resize();
+        this.loadVersion();
 
-        // Camera State
+        window.addEventListener('resize', () => this.resize());
+        requestAnimationFrame((t) => this.loop(t));
+    }
+
+    initSimulation() {
+        // Read initial values from DOM
+        const getVal = (id, isInt = false, def = 0) => {
+            const el = document.getElementById(id);
+            if (!el) return def;
+            return isInt ? parseInt(el.value) : parseFloat(el.value);
+        };
+
+        const sizeIdx = getVal('param-size', true, 3);
+        this.gridSize = this.sizes[sizeIdx] || 1024;
+
+        const initialParams = {
+            slopeMag: getVal('param-slope-mag'),
+            slopeDir: getVal('param-slope-dir'),
+            octaves: getVal('param-octaves', true),
+            gain: getVal('param-gain'),
+            initialWaterLevel: getVal('param-water'),
+
+            rainRate: getVal('param-rain'),
+            evaporationRate: getVal('param-evap'),
+            erosionRate: getVal('param-erode'),
+            depositionRate: getVal('param-deposit'),
+
+            viewSensitivity: getVal('param-sensitivity')
+        };
+
+        this.simulation = new GPUSimulation(this.canvas, this.gridSize, initialParams);
+        
+        // Initialize simSpeed from UI
+        this.simSpeed = getVal('param-speed', true, 10);
+    }
+
+    initCamera() {
         this.cameraState = {
             position: [this.gridSize / 2, -this.gridSize * 0.2, this.gridSize * 0.5],
             yaw: Math.PI / 2, // Looking North
             pitch: -Math.PI / 6, // Looking slightly down
             roll: 0
         };
-        this.keys = { w: false, a: false, s: false, d: false, q: false, e: false, shift: false };
         this.updateCamera();
-
-        this.initUI();
-        this.initInput();
-        this.resize();
-        this.loadVersion();
-
-        window.addEventListener('resize', () => this.resize());
-
-        // Start loop
-        requestAnimationFrame((t) => this.loop(t));
     }
 
     initInput() {
@@ -111,23 +104,202 @@ class App {
             }
         });
 
-        window.addEventListener('keydown', (e) => {
+        const handleKey = (e, isDown) => {
             const key = e.key.toLowerCase();
-            if (this.keys.hasOwnProperty(key)) this.keys[key] = true;
+            if (this.keys.hasOwnProperty(key)) this.keys[key] = isDown;
             this.keys.shift = e.shiftKey;
-        });
+        };
+
+        window.addEventListener('keydown', (e) => handleKey(e, true));
+        window.addEventListener('keyup', (e) => handleKey(e, false));
+    }
+
+    initUI() {
+        this.initButtons();
+        this.initControls();
+        this.initPopups();
         
-        window.addEventListener('keyup', (e) => {
-            const key = e.key.toLowerCase();
-            if (this.keys.hasOwnProperty(key)) this.keys[key] = false;
-            this.keys.shift = e.shiftKey;
+        // Collapsible groups
+        document.querySelectorAll('.control-supergroup-header').forEach(header => {
+            header.addEventListener('click', () => {
+                header.parentElement.classList.toggle('collapsed');
+            });
         });
+    }
+
+    initButtons() {
+        // Pause Button
+        const pauseBtn = document.getElementById('btn-pause');
+        if (pauseBtn) {
+            pauseBtn.onclick = () => {
+                this.isRunning = !this.isRunning;
+                if (this.isRunning) {
+                    pauseBtn.innerText = 'Pause';
+                    pauseBtn.classList.remove('active');
+                } else {
+                    pauseBtn.innerText = 'Paused';
+                    pauseBtn.classList.add('active');
+                }
+                this.updateStatus();
+            };
+        }
+
+        // Toggle Status Bar
+        const toggleStatusBtn = document.getElementById('btn-toggle-status');
+        if (toggleStatusBtn) {
+            toggleStatusBtn.onclick = () => {
+                const el = document.getElementById('status');
+                const isHidden = el.style.display === 'none';
+                el.style.display = isHidden ? 'block' : 'none';
+                toggleStatusBtn.classList.toggle('active', isHidden);
+            };
+        }
+
+        // View Mode
+        const viewModeEl = document.getElementById('view-mode');
+        if (viewModeEl) {
+            viewModeEl.onchange = () => {
+                if (!this.isRunning) this.draw();
+                this.updateStatus();
+            };
+        }
+    }
+
+    initControls() {
+        // Helper to bind simulation parameters
+        const bindParam = (id, targetProp, isInt = false) => {
+            const el = document.getElementById(id);
+            const disp = document.getElementById(id.replace('param-', 'val-'));
+            if (!el || !disp) return;
+
+            const update = () => {
+                const val = isInt ? parseInt(el.value) : parseFloat(el.value);
+                this.simulation.params[targetProp] = val;
+                disp.textContent = val;
+                this.updateStatus();
+            };
+            el.oninput = update;
+            // Initial sync
+            disp.textContent = el.value;
+        };
+
+        // Physics
+        bindParam('param-rain', 'rainRate');
+        bindParam('param-evap', 'evaporationRate');
+        bindParam('param-erode', 'erosionRate');
+        bindParam('param-deposit', 'depositionRate');
+        
+        // Visualization
+        bindParam('param-sensitivity', 'viewSensitivity');
+
+        // Speed Control (Special case as it's on App, not simulation.params)
+        const speedEl = document.getElementById('param-speed');
+        const speedDisp = document.getElementById('val-speed');
+        if (speedEl && speedDisp) {
+            speedEl.oninput = (e) => {
+                this.simSpeed = parseInt(e.target.value);
+                speedDisp.textContent = this.simSpeed;
+                this.updateStatus();
+            };
+            speedDisp.textContent = speedEl.value;
+        }
+    }
+
+    initPopups() {
+        // Splash Screen
+        const splash = document.getElementById('splash-screen');
+        const closeSplash = document.getElementById('btn-close-splash');
+        const helpBtn = document.getElementById('btn-help');
+
+        if (splash && closeSplash) {
+            closeSplash.onclick = () => splash.style.display = 'none';
+        }
+        if (helpBtn && splash) {
+            helpBtn.onclick = () => splash.style.display = 'flex';
+        }
+
+        // Map Generation Popup
+        const mapGenPopup = document.getElementById('map-gen-popup');
+        const mapGenBtn = document.getElementById('btn-map-gen');
+        const closeMapGenBtn = document.getElementById('btn-close-map-gen');
+        const generateBtn = document.getElementById('btn-generate-map');
+
+        if (mapGenBtn && mapGenPopup) {
+            mapGenBtn.onclick = () => mapGenPopup.style.display = 'block';
+        }
+        if (closeMapGenBtn && mapGenPopup) {
+            closeMapGenBtn.onclick = () => mapGenPopup.style.display = 'none';
+        }
+
+        // Bind Map Gen Controls (Display only, applied on Generate)
+        const bindDisplay = (id, isInt = false, formatter = null) => {
+            const el = document.getElementById(id);
+            const disp = document.getElementById(id.replace('param-', 'val-'));
+            if (!el || !disp) return;
+
+            el.oninput = (e) => {
+                const val = isInt ? parseInt(e.target.value) : parseFloat(e.target.value);
+                disp.textContent = formatter ? formatter(val) : val;
+            };
+            // Initial sync
+            const initVal = isInt ? parseInt(el.value) : parseFloat(el.value);
+            disp.textContent = formatter ? formatter(initVal) : initVal;
+        };
+
+        bindDisplay('param-octaves', true);
+        bindDisplay('param-gain');
+        bindDisplay('param-slope-mag');
+        bindDisplay('param-slope-dir');
+        bindDisplay('param-water');
+        bindDisplay('param-size', true, (idx) => `${this.sizes[idx]}x${this.sizes[idx]}`);
+
+        if (generateBtn) {
+            generateBtn.onclick = () => this.generateMap(mapGenPopup);
+        }
+    }
+
+    generateMap(popup) {
+        const getVal = (id, isInt = false) => {
+            const el = document.getElementById(id);
+            return isInt ? parseInt(el.value) : parseFloat(el.value);
+        };
+
+        // Update params from UI
+        this.simulation.params.octaves = getVal('param-octaves', true);
+        this.simulation.params.gain = getVal('param-gain');
+        this.simulation.params.slopeMag = getVal('param-slope-mag');
+        this.simulation.params.slopeDir = getVal('param-slope-dir');
+        this.simulation.params.initialWaterLevel = getVal('param-water');
+
+        // Handle size change
+        const sizeIdx = getVal('param-size', true);
+        const newSize = this.sizes[sizeIdx];
+        
+        if (newSize !== this.gridSize) {
+            this.gridSize = newSize;
+            // Re-init simulation with new size
+            const oldParams = this.simulation.params;
+            this.simulation = new GPUSimulation(this.canvas, this.gridSize, oldParams);
+            
+            // Reset camera target
+            this.cameraState.position = [this.gridSize / 2, -this.gridSize * 0.2, this.gridSize * 0.5];
+            this.updateCamera();
+            this.resize();
+        } else {
+            this.simulation.reset();
+        }
+        
+        this.draw();
+        this.updateStatus();
+        
+        if (popup) {
+            popup.style.display = 'none';
+        }
     }
 
     updateCamera() {
         const { position, yaw, pitch } = this.cameraState;
         
-        // Calculate forward vector from yaw/pitch
         const cosPitch = Math.cos(pitch);
         const sinPitch = Math.sin(pitch);
         const cosYaw = Math.cos(yaw);
@@ -151,15 +323,13 @@ class App {
     }
 
     processInput(dt) {
-        // Movement speed
-        const baseSpeed = this.gridSize * 0.5; // Units per second
+        const baseSpeed = this.gridSize * 0.5;
         const moveSpeed = (this.keys.shift ? 4.0 : 1.0) * baseSpeed * (dt / 1000.0);
 
         const { yaw } = this.cameraState;
         const c = Math.cos(yaw);
         const s = Math.sin(yaw);
         
-        // Forward vector on XY plane
         const forward = [c, s, 0];
         const right = [s, -c, 0];
         
@@ -198,242 +368,6 @@ class App {
         
         if (moved) {
             this.updateCamera();
-        }
-    }
-
-    initUI() {
-        // Buttons
-        const pauseBtn = document.getElementById('btn-pause');
-        if (pauseBtn) {
-            pauseBtn.onclick = () => {
-                this.isRunning = !this.isRunning;
-                if (this.isRunning) {
-                    pauseBtn.innerText = 'Pause';
-                    pauseBtn.classList.remove('active');
-                } else {
-                    pauseBtn.innerText = 'Paused';
-                    pauseBtn.classList.add('active');
-                }
-                this.updateStatus();
-            };
-        }
-
-        // Parameters
-        const bindParam = (id, targetProp) => {
-            const el = document.getElementById(id);
-            const disp = document.getElementById(id.replace('param-', 'val-'));
-            el.oninput = (e) => {
-                const val = parseFloat(e.target.value);
-                this.simulation.params[targetProp] = val;
-                disp.textContent = val;
-                this.updateStatus();
-            };
-            // Init value
-            this.simulation.params[targetProp] = parseFloat(el.value);
-        };
-
-        bindParam('param-rain', 'rainRate');
-        bindParam('param-evap', 'evaporationRate');
-        bindParam('param-erode', 'erosionRate');
-        bindParam('param-deposit', 'depositionRate');
-
-        // Speed Control
-        const speedEl = document.getElementById('param-speed');
-        const speedDisp = document.getElementById('val-speed');
-        speedEl.oninput = (e) => {
-            this.simSpeed = parseInt(e.target.value);
-            speedDisp.textContent = this.simSpeed;
-            this.updateStatus();
-        };
-        // Initialize speed from control
-        this.simSpeed = parseInt(speedEl.value);
-        speedDisp.textContent = this.simSpeed;
-
-        // Octaves Control
-        const octEl = document.getElementById('param-octaves');
-        const octDisp = document.getElementById('val-octaves');
-        octEl.oninput = (e) => {
-            octDisp.textContent = e.target.value;
-        };
-        // Initialize octaves from control
-        const initOct = parseInt(octEl.value);
-        this.simulation.params.octaves = initOct;
-        octDisp.textContent = octEl.value;
-        // ensure status reflects initial octaves
-        this.updateStatus();
-
-        // Gain Control
-        const gainEl = document.getElementById('param-gain');
-        const gainDisp = document.getElementById('val-gain');
-        gainEl.oninput = (e) => {
-            gainDisp.textContent = e.target.value;
-        };
-        // Initialize gain from control
-        const initGain = parseFloat(gainEl.value);
-        this.simulation.params.gain = initGain;
-        gainDisp.textContent = gainEl.value;
-
-        // Slope Magnitude Control
-        const slopeMagEl = document.getElementById('param-slope-mag');
-        const slopeMagDisp = document.getElementById('val-slope-mag');
-        slopeMagEl.oninput = (e) => {
-            slopeMagDisp.textContent = e.target.value;
-        };
-        // Initialize slope mag
-        this.simulation.params.slopeMag = parseFloat(slopeMagEl.value);
-        slopeMagDisp.textContent = slopeMagEl.value;
-
-        // Slope Direction Control
-        const slopeDirEl = document.getElementById('param-slope-dir');
-        const slopeDirDisp = document.getElementById('val-slope-dir');
-        slopeDirEl.oninput = (e) => {
-            slopeDirDisp.textContent = e.target.value;
-        };
-        // Initialize slope dir
-        this.simulation.params.slopeDir = parseFloat(slopeDirEl.value);
-        slopeDirDisp.textContent = slopeDirEl.value;
-
-        // Map Size Control
-        const sizeEl = document.getElementById('param-size');
-        const sizeDisp = document.getElementById('val-size');
-        const sizes = [256, 512, 1024, 2048];
-
-        sizeEl.oninput = (e) => {
-            const idx = parseInt(e.target.value);
-            sizeDisp.textContent = `${sizes[idx]}x${sizes[idx]}`;
-        };
-
-        // Initialize size control to match current gridSize (or fallback to control value)
-        const currentSizeIdx = sizes.indexOf(this.gridSize);
-        const initSizeIdx = currentSizeIdx >= 0 ? currentSizeIdx : parseInt(sizeEl.value);
-        sizeEl.value = initSizeIdx;
-        sizeDisp.textContent = `${sizes[initSizeIdx]}x${sizes[initSizeIdx]}`;
-
-        // Water Level Control
-        const waterEl = document.getElementById('param-water');
-        const waterDisp = document.getElementById('val-water');
-        waterEl.oninput = (e) => {
-            waterDisp.textContent = e.target.value;
-        };
-        // Initialize water level from control
-        this.simulation.params.initialWaterLevel = parseFloat(waterEl.value);
-        waterDisp.textContent = waterEl.value;
-        // reflect initial water in status
-        this.updateStatus();
-
-        // View Sensitivity
-        const sensEl = document.getElementById('param-sensitivity');
-        const sensDisp = document.getElementById('val-sensitivity');
-        sensEl.oninput = (e) => {
-            const val = parseFloat(e.target.value);
-            this.simulation.params.viewSensitivity = val;
-            sensDisp.textContent = val;
-            this.draw();
-        };
-        // Initialize sensitivity from the control so the simulation uses it immediately
-        this.simulation.params.viewSensitivity = parseFloat(sensEl.value);
-        sensDisp.textContent = sensEl.value;
-
-        // View Mode
-        document.getElementById('view-mode').onchange = (e) => {
-            if (!this.isRunning) this.draw();
-            this.updateStatus();
-        };
-
-        // Toggle Status Bar
-        const toggleStatusBtn = document.getElementById('btn-toggle-status');
-        if (toggleStatusBtn) {
-            toggleStatusBtn.onclick = () => {
-                const el = document.getElementById('status');
-                const isHidden = el.style.display === 'none';
-                el.style.display = isHidden ? 'block' : 'none';
-                if (isHidden) {
-                    toggleStatusBtn.classList.add('active');
-                } else {
-                    toggleStatusBtn.classList.remove('active');
-                }
-            };
-        }
-
-        // Splash Screen
-        const splash = document.getElementById('splash-screen');
-        const closeSplash = document.getElementById('btn-close-splash');
-        if (splash && closeSplash) {
-            closeSplash.onclick = () => {
-                splash.style.display = 'none';
-            };
-        }
-
-        // Help Button
-        const helpBtn = document.getElementById('btn-help');
-        if (helpBtn && splash) {
-            helpBtn.onclick = () => {
-                splash.style.display = 'flex';
-            };
-        }
-
-        // Collapsible groups
-        document.querySelectorAll('.control-supergroup-header').forEach(header => {
-            header.addEventListener('click', () => {
-                header.parentElement.classList.toggle('collapsed');
-            });
-        });
-
-        // Map Gen Popup
-        const mapGenBtn = document.getElementById('btn-map-gen');
-        const mapGenPopup = document.getElementById('map-gen-popup');
-        const closeMapGenBtn = document.getElementById('btn-close-map-gen');
-
-        if (mapGenBtn && mapGenPopup) {
-            mapGenBtn.onclick = () => {
-                mapGenPopup.style.display = 'block';
-            };
-        }
-        if (closeMapGenBtn && mapGenPopup) {
-            closeMapGenBtn.onclick = () => {
-                mapGenPopup.style.display = 'none';
-            };
-        }
-
-        // Generate Map Button
-        const generateBtn = document.getElementById('btn-generate-map');
-        if (generateBtn) {
-            generateBtn.onclick = () => {
-                // Update params from UI
-                this.simulation.params.octaves = parseInt(octEl.value);
-                this.simulation.params.gain = parseFloat(gainEl.value);
-                this.simulation.params.slopeMag = parseFloat(slopeMagEl.value);
-                this.simulation.params.slopeDir = parseFloat(slopeDirEl.value);
-                this.simulation.params.initialWaterLevel = parseFloat(waterEl.value);
-
-                // Handle size change if needed
-                const sizeIdx = parseInt(sizeEl.value);
-                const newSize = sizes[sizeIdx];
-                
-                if (newSize !== this.gridSize) {
-                    this.gridSize = newSize;
-                    // Re-init simulation with new size
-                    const oldParams = this.simulation.params;
-                    this.simulation = new GPUSimulation(this.canvas, this.gridSize, oldParams);
-                    
-                    // Reset camera target
-                    this.cameraState.target = [this.gridSize / 2, this.gridSize / 2, 0];
-                    this.cameraState.distance = this.gridSize * 1.5;
-                    this.updateCamera();
-                    this.resize();
-                } else {
-                    // Just reset/regenerate with current size
-                    this.simulation.reset();
-                }
-                
-                this.draw();
-                this.updateStatus();
-                
-                // Close popup
-                if (mapGenPopup) {
-                    mapGenPopup.style.display = 'none';
-                }
-            };
         }
     }
 
@@ -489,7 +423,6 @@ class App {
     }
 
     resize() {
-        // Canvas size matches window/container
         const container = this.canvas.parentElement;
         this.canvas.width = container.clientWidth;
         this.canvas.height = container.clientHeight;
@@ -508,7 +441,6 @@ class App {
             const data = await response.json();
             console.log(`Build: ${data.build} (${data.date})`);
             
-            // Add version to status bar if it exists
             const el = document.getElementById('status');
             if (el) {
                 this.versionString = `Build: ${data.build}`;
@@ -533,7 +465,6 @@ class App {
 
         this.draw();
 
-        // FPS
         this.frameCount++;
         if (timestamp - this.lastFpsTime >= 1000) {
             document.getElementById('fps-counter').textContent = this.frameCount;
@@ -541,7 +472,6 @@ class App {
             this.lastFpsTime = timestamp;
         }
 
-        // update status (every 500ms)
         if (timestamp - this.lastStatsTime >= 500) {
             this.updateStatus();
             this.lastStatsTime = timestamp;
@@ -551,7 +481,6 @@ class App {
     }
 }
 
-// Start app when DOM is ready
 window.addEventListener('DOMContentLoaded', () => {
     try {
         new App();
