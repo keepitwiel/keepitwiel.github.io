@@ -235,6 +235,31 @@ class App {
         // Visualization
         bindParam('param-sensitivity', 'viewSensitivity');
 
+        // Splat controls (App-local properties)
+        const splatAmountEl = document.getElementById('param-splat-amount');
+        const splatAmountDisp = document.getElementById('val-splat-amount');
+        if (splatAmountEl && splatAmountDisp) {
+            splatAmountEl.oninput = (e) => {
+                const val = parseFloat(e.target.value);
+                this.splatAmount = val;
+                splatAmountDisp.textContent = val;
+                this.updateStatus();
+            };
+            splatAmountDisp.textContent = splatAmountEl.value;
+        }
+
+        const splatRadiusEl = document.getElementById('param-splat-radius');
+        const splatRadiusDisp = document.getElementById('val-splat-radius');
+        if (splatRadiusEl && splatRadiusDisp) {
+            splatRadiusEl.oninput = (e) => {
+                const val = parseFloat(e.target.value);
+                this.splatRadius = val;
+                splatRadiusDisp.textContent = val;
+                this.updateStatus();
+            };
+            splatRadiusDisp.textContent = splatRadiusEl.value;
+        }
+
         // Speed Control (Special case as it's on App, not simulation.params)
         const speedEl = document.getElementById('param-speed');
         const speedDisp = document.getElementById('val-speed');
