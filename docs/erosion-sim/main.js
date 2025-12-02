@@ -7,9 +7,12 @@ class App {
         // Probe throttling: max probe runs per second
         this.probeThrottleHz = 30; // default 30 Hz
         this._lastProbeTime = 0;
+        // Paint throttling (splat while dragging)
+        this.paintThrottleHz = 15; // default 15 Hz
+        this._lastPaintTime = 0;
         // Amount to add to terrain on click (in terrain height units)
-        this.splatAmount = 1.0;
-        this.splatRadius = 5.0; // texels
+        this.splatAmount = 10.0;
+        this.splatRadius = 64.0; // texels
         this.sizes = [256, 512, 1024, 2048];
         
         // State
@@ -95,8 +98,12 @@ class App {
             if (!isDragging) return;
             const dx = e.clientX - lastX;
             const dy = e.clientY - lastY;
+            // Update last positions so movement doesn't jump when shift is released
             lastX = e.clientX;
             lastY = e.clientY;
+
+            // If Shift is held we treat the drag as painting control and do not rotate the camera.
+            if (e.shiftKey || this.keys.shift) return;
 
             const sensitivity = 0.005;
             this.cameraState.yaw -= dx * sensitivity;
@@ -131,6 +138,24 @@ class App {
             if (pos && pos.length === 2) {
                 this.probePos = pos;
                 this.simulation.params.probePos = pos;
+            }
+
+            // If left mouse button is down while moving, perform splat painting (throttled)
+            // e.buttons bitfield: bit 0 = left button
+            try {
+                // Require modifier key (Shift) to paint while dragging so camera rotation remains the default drag behavior.
+                if (e.buttons && (e.buttons & 1) && (e.shiftKey || this.keys.shift)) {
+                    const paintInterval = 1000 / this.paintThrottleHz;
+                    if (now - this._lastPaintTime >= paintInterval) {
+                        if (this.probePos && this.probePos.length === 2 && this.probePos[0] >= 0) {
+                            this.simulation.splatAt(this.probePos[0], this.probePos[1], this.splatAmount, this.splatRadius);
+                            this.draw();
+                        }
+                        this._lastPaintTime = now;
+                    }
+                }
+            } catch (err) {
+                // ignore
             }
         });
 

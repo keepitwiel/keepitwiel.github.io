@@ -71,8 +71,8 @@
                     <div class="control-group">
                         <label>View Mode</label>
                         <select id="view-mode">
-                            <option value="water">Water Depth</option>
                             <option value="terrain">Composite</option>
+                            <option value="water">Water Depth</option>
                             <option value="sediment">Sediment Concentration</option>
                             <option value="height">Height Map</option>
                             <option value="velocity">Velocity</option>
@@ -93,14 +93,14 @@
                 <div class="control-supergroup-content">
                     <div class="control-group">
                         <label for="param-splat-amount">Splat Amount</label>
-                        <input type="range" id="param-splat-amount" min="-10" max="10" step="0.1" value="0.1">
-                        <span class="value-display" id="val-splat-amount">0.1</span>
+                        <input type="range" id="param-splat-amount" min="-10" max="10" step="0.1" value="10">
+                        <span class="value-display" id="val-splat-amount">10</span>
                     </div>
 
                     <div class="control-group">
                         <label for="param-splat-radius">Splat Radius (texels)</label>
-                        <input type="range" id="param-splat-radius" min="0" max="64" step="1" value="5">
-                        <span class="value-display" id="val-splat-radius">5</span>
+                        <input type="range" id="param-splat-radius" min="0" max="64" step="1" value="64">
+                        <span class="value-display" id="val-splat-radius">64</span>
                     </div>
                 </div>
             </div>
@@ -119,7 +119,12 @@
         <div class="splash-content">
             <h2>Welcome to Erosion Sim</h2>
             <p>Explore a GPU-accelerated hydraulic erosion simulation.</p>
-            <h3>Controls</h3>
+            <h3>Paint Controls</h3>
+            <ul>
+                <li><strong>Mouse Click</strong>: paint</li>
+                <li><strong>Shift + Mouse Drag</strong>: paint streak</li>
+            </ul>
+            <h3>Camera Controls</h3>
             <ul>
                 <li><strong>WASD</strong>: Move Camera</li>
                 <li><strong>Q / E</strong>: Move Up / Down</li>
