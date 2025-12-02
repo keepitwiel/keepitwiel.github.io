@@ -6,3 +6,4 @@ export * from './velocity.js';
 export * from './erosion.js';
 export * from './render.js';
 export * from './stats.js';
+export * from './probe.js';

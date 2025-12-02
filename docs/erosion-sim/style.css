@@ -194,8 +194,8 @@ select {
 /* On-screen compact status bar (running/paused + key params) */
 .status-bar {
     position: fixed;
-    bottom: 12px;
-    left: 332px;
+    top: 12px;
+    right: 12px;
     background: rgba(20,20,20,0.75);
     color: var(--text-color);
     padding: 6px 10px;

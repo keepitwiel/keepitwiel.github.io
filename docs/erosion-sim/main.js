@@ -3,6 +3,10 @@ import { GPUSimulation } from './gpu-simulation.js';
 class App {
     constructor() {
         this.canvas = document.getElementById('simCanvas');
+        this.probePos = [-1, -1];
+        // Probe throttling: max probe runs per second
+        this.probeThrottleHz = 30; // default 30 Hz
+        this._lastProbeTime = 0;
         this.sizes = [256, 512, 1024, 2048];
         
         // State
@@ -102,6 +106,28 @@ class App {
             this.updateCamera();
             if (!this.isRunning) {
                  this.draw();
+            }
+        });
+
+        // Always update probe on mouse move over the canvas (even when not dragging)
+        this.canvas.addEventListener('mousemove', (e) => {
+            if (!this.simulation) return;
+            const now = performance.now();
+            const interval = 1000 / this.probeThrottleHz;
+            if (now - this._lastProbeTime < interval) return; // throttle
+            this._lastProbeTime = now;
+
+            // Convert client coords to canvas pixel coords
+            const rect = this.canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) * (this.canvas.width / rect.width);
+            const y = (e.clientY - rect.top) * (this.canvas.height / rect.height);
+            // WebGL coordinates origin is bottom-left
+            const yGL = this.canvas.height - y;
+
+            const pos = this.simulation.runProbe(x, yGL);
+            if (pos && pos.length === 2) {
+                this.probePos = pos;
+                this.simulation.params.probePos = pos;
             }
         });
 
@@ -399,25 +425,26 @@ class App {
         const camPos = this.cameraState.position.map(v => v.toFixed(1)).join(', ');
         const camYaw = (this.cameraState.yaw * 180 / Math.PI).toFixed(1);
         const camPitch = (this.cameraState.pitch * 180 / Math.PI).toFixed(1);
+        var probePos = '';
+        if (p.probePos) {
+            probePos = p.probePos.map(v => v.toFixed(0)).join(', ');
+        }
 
         const parts = [
-            `STATUS:           ${s}`,
-            ``,
             `CAMERA`,
-            `----------`,
+            `------`,
             `Position:         [${camPos}]`,
             `Yaw:              ${camYaw}°`,
             `Pitch:            ${camPitch}°`,
-            ``,
-            `PARAMETERS`,
-            `----------`,
             `View mode:        ${mode}`,
-            `Rain rate:        ${p.rainRate}`,
-            `Evaporation rate: ${p.evaporationRate}`,
-            `Erosion rate:     ${p.erosionRate}`,
-            `Deposition rate:  ${p.depositionRate}`,
-            `Simulation speed: ${this.simSpeed}`,
             `View sensitivity: ${p.viewSensitivity}`,
+            ``,
+            `PROBE`,
+            `-----`,
+            `Position:         [${probePos}]`,
+            ``,
+            `TERRAIN PARAMETERS`,
+            `------------------`,
             `Terrain size:     ${p.gridSize}`,
             `fBm octaves:      ${p.octaves}`,
             `fBm gain:         ${p.gain}`,
@@ -425,8 +452,18 @@ class App {
             `Slope direction:  ${p.slopeDir}`,
             `Init water level: ${p.initialWaterLevel}`,
             ``,
-            `STATISTICS`,
-            `----------`,
+            ``,
+            `SIMULATION PARAMETERS`,
+            `---------------------`,
+            `Rain rate:        ${p.rainRate}`,
+            `Evaporation rate: ${p.evaporationRate}`,
+            `Erosion rate:     ${p.erosionRate}`,
+            `Deposition rate:  ${p.depositionRate}`,
+            `Simulation speed: ${this.simSpeed} (steps per frame)`,
+            ``,
+            `SIMULATION STATISTICS`,
+            `---------------------`,
+            `Simulation status:  ${s}`,
             `Water total:        ${stats.water.toFixed(0)}`,
             `Terrain total:      ${stats.terrain.toFixed(0)}`,
             `Sediment total:     ${stats.sediment.toFixed(0)}`,
@@ -489,7 +526,7 @@ class App {
             this.lastFpsTime = timestamp;
         }
 
-        if (timestamp - this.lastStatsTime >= 500) {
+        if (timestamp - this.lastStatsTime >= 100) {
             this.updateStatus();
             this.lastStatsTime = timestamp;
         }

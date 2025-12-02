@@ -91,6 +91,7 @@ export class GPUSimulation {
         this.programs.velocity = this.createProgram(vs, Shaders.VELOCITY_SHADER);
         this.programs.erosion = this.createProgram(vs, Shaders.EROSION_SHADER);
         this.programs.render = this.createProgram(vs, Shaders.RENDER_SHADER);
+        this.programs.probe = this.createProgram(vs, Shaders.PROBE_SHADER);
         this.programs.stats = this.createProgram(vs, Shaders.STATS_SHADER);
     }
 
@@ -129,11 +130,68 @@ export class GPUSimulation {
         this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA32F, this.statsSize, this.statsSize, 0, this.gl.RGBA, this.gl.FLOAT, null);
         this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.NEAREST);
         this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.NEAREST);
+
+        // Probe result texture (1x1)
+        this.textures.probe = this.gl.createTexture();
+        this.gl.bindTexture(this.gl.TEXTURE_2D, this.textures.probe);
+        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA32F, 1, 1, 0, this.gl.RGBA, this.gl.FLOAT, null);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.NEAREST);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.NEAREST);
     }
 
     initFramebuffers() {
         this.framebuffers.sim = this.gl.createFramebuffer();
         this.framebuffers.stats = this.gl.createFramebuffer();
+        this.framebuffers.probe = this.gl.createFramebuffer();
+    }
+
+    // Run the probe shader for a given mouse position (pixel coordinates, WebGL origin bottom-left)
+    runProbe(mouseX, mouseY) {
+        const gl = this.gl;
+        gl.useProgram(this.programs.probe);
+
+        // Bind inputs (terrain, water, sediment, velocity)
+        gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, this.textures.terrainA);
+        gl.uniform1i(gl.getUniformLocation(this.programs.probe, 'u_terrain'), 0);
+
+        gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, this.textures.waterA);
+        gl.uniform1i(gl.getUniformLocation(this.programs.probe, 'u_water'), 1);
+
+        gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, this.textures.sedimentA);
+        gl.uniform1i(gl.getUniformLocation(this.programs.probe, 'u_sediment'), 2);
+
+        gl.activeTexture(gl.TEXTURE3); gl.bindTexture(gl.TEXTURE_2D, this.textures.velocity);
+        gl.uniform1i(gl.getUniformLocation(this.programs.probe, 'u_velocity'), 3);
+
+        // Uniforms
+        gl.uniform2fv(gl.getUniformLocation(this.programs.probe, 'u_size'), [this.size, this.size]);
+        gl.uniform2fv(gl.getUniformLocation(this.programs.probe, 'u_resolution'), [this.canvas.width, this.canvas.height]);
+        gl.uniform2fv(gl.getUniformLocation(this.programs.probe, 'u_mouse'), [mouseX, mouseY]);
+
+        gl.uniform3fv(gl.getUniformLocation(this.programs.probe, 'u_cameraPos'), this.params.cameraPos);
+        gl.uniform3fv(gl.getUniformLocation(this.programs.probe, 'u_cameraTarget'), this.params.cameraTarget);
+        gl.uniform1f(gl.getUniformLocation(this.programs.probe, 'u_fov'), this.params.fov);
+        gl.uniform1f(gl.getUniformLocation(this.programs.probe, 'u_cameraRoll'), this.params.cameraRoll);
+
+        // Render to 1x1 probe texture
+        gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffers.probe);
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.textures.probe, 0);
+        gl.viewport(0, 0, 1, 1);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.quadBuffer);
+        gl.enableVertexAttribArray(0);
+        gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+        // Read back pixel
+        const pixels = new Float32Array(4);
+        gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.FLOAT, pixels);
+
+        // Restore default framebuffer viewport (some callers expect to render to canvas afterwards)
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+
+        return [pixels[0], pixels[1]];
     }
 
     reset() {
