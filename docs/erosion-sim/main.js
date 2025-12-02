@@ -7,6 +7,9 @@ class App {
         // Probe throttling: max probe runs per second
         this.probeThrottleHz = 30; // default 30 Hz
         this._lastProbeTime = 0;
+        // Amount to add to terrain on click (in terrain height units)
+        this.splatAmount = 1.0;
+        this.splatRadius = 5.0; // texels
         this.sizes = [256, 512, 1024, 2048];
         
         // State
@@ -129,6 +132,19 @@ class App {
                 this.probePos = pos;
                 this.simulation.params.probePos = pos;
             }
+        });
+
+        // Click to add a constant amount to terrain at the last probe position
+        this.canvas.addEventListener('click', (e) => {
+            if (!this.simulation) return;
+            const p = this.probePos;
+            if (!p || p.length !== 2) return;
+            if (p[0] < 0 || p[1] < 0) return;
+
+            this.simulation.splatAt(p[0], p[1], this.splatAmount, this.splatRadius);
+            // Redraw so change is visible immediately
+            this.draw();
+            console.log('Splat shader applied at', p);
         });
 
         const handleKey = (e, isDown) => {

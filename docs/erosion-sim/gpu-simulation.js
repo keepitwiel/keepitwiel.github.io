@@ -92,6 +92,7 @@ export class GPUSimulation {
         this.programs.erosion = this.createProgram(vs, Shaders.EROSION_SHADER);
         this.programs.render = this.createProgram(vs, Shaders.RENDER_SHADER);
         this.programs.probe = this.createProgram(vs, Shaders.PROBE_SHADER);
+        this.programs.splat = this.createProgram(vs, Shaders.SPLAT_SHADER);
         this.programs.stats = this.createProgram(vs, Shaders.STATS_SHADER);
     }
 
@@ -192,6 +193,54 @@ export class GPUSimulation {
         gl.viewport(0, 0, this.canvas.width, this.canvas.height);
 
         return [pixels[0], pixels[1]];
+    }
+
+    // Shader-based splat: add an amount to terrain texels in a radius around world coords
+    // worldX/worldY are in texel coordinates (0..size-1)
+    splatAt(worldX, worldY, amount, radius) {
+        const gl = this.gl;
+        gl.useProgram(this.programs.splat);
+
+        // Bind input terrain texture
+        gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, this.textures.terrainA);
+        gl.uniform1i(gl.getUniformLocation(this.programs.splat, 'u_terrain'), 0);
+
+        gl.uniform2fv(gl.getUniformLocation(this.programs.splat, 'u_center'), [worldX, worldY]);
+        gl.uniform1f(gl.getUniformLocation(this.programs.splat, 'u_radius'), radius);
+        gl.uniform1f(gl.getUniformLocation(this.programs.splat, 'u_amount'), amount);
+
+        // Render into terrainB then swap
+        this.runPass(this.programs.splat, { u_terrain: this.textures.terrainA }, this.textures.terrainB, {});
+        this.swap('terrain');
+    }
+
+    // Add a constant delta to the terrain texture at world coordinates (x,y).
+    // worldX/worldY are in terrain texel space (0..size-1).
+    addTerrainAt(worldX, worldY, delta) {
+        const gl = this.gl;
+        const ix = Math.floor(worldX);
+        const iy = Math.floor(worldY);
+        if (ix < 0 || ix >= this.size || iy < 0 || iy >= this.size) return null;
+
+        // Bind framebuffer and attach terrain texture so we can read the pixel
+        gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffers.sim);
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.textures.terrainA, 0);
+        gl.viewport(0, 0, this.size, this.size);
+
+        const px = new Float32Array(4);
+        gl.readPixels(ix, iy, 1, 1, gl.RGBA, gl.FLOAT, px);
+
+        px[0] = px[0] + delta;
+
+        // Write back the modified pixel into the texture
+        gl.bindTexture(gl.TEXTURE_2D, this.textures.terrainA);
+        gl.texSubImage2D(gl.TEXTURE_2D, 0, ix, iy, 1, 1, gl.RGBA, gl.FLOAT, px);
+
+        // Restore default framebuffer
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+
+        return px[0];
     }
 
     reset() {
