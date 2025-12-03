@@ -14,7 +14,7 @@ class App {
         this.splatAmount = 10.0;
         this.splatRadius = 64.0; // texels
         this.sizes = [256, 512, 1024, 2048];
-        
+
         // State
         this.isRunning = true;
         this.simSpeed = 10;
@@ -28,7 +28,7 @@ class App {
         this.initCamera();
         this.initInput();
         this.initUI();
-        
+
         this.resize();
         this.loadVersion();
 
@@ -64,7 +64,7 @@ class App {
         };
 
         this.simulation = new GPUSimulation(this.canvas, this.gridSize, initialParams);
-        
+
         // Initialize simSpeed from UI
         this.simSpeed = getVal('param-speed', true, 10);
     }
@@ -108,14 +108,14 @@ class App {
             const sensitivity = 0.005;
             this.cameraState.yaw -= dx * sensitivity;
             this.cameraState.pitch -= dy * sensitivity;
-            
+
             // Clamp pitch
             const maxPitch = Math.PI / 2 - 0.01;
             this.cameraState.pitch = Math.max(-maxPitch, Math.min(maxPitch, this.cameraState.pitch));
 
             this.updateCamera();
             if (!this.isRunning) {
-                 this.draw();
+                this.draw();
             }
         });
 
@@ -162,6 +162,8 @@ class App {
         // Click to add a constant amount to terrain at the last probe position
         this.canvas.addEventListener('click', (e) => {
             if (!this.simulation) return;
+            // Require modifier key (Shift) to paint
+            if (!e.shiftKey && !this.keys.shift) return;
             const p = this.probePos;
             if (!p || p.length !== 2) return;
             if (p[0] < 0 || p[1] < 0) return;
@@ -186,7 +188,7 @@ class App {
         this.initButtons();
         this.initControls();
         this.initPopups();
-        
+
         // Collapsible groups
         document.querySelectorAll('.control-supergroup-header').forEach(header => {
             header.addEventListener('click', () => {
@@ -256,7 +258,7 @@ class App {
         bindParam('param-evap', 'evaporationRate');
         bindParam('param-erode', 'erosionRate');
         bindParam('param-deposit', 'depositionRate');
-        
+
         // Visualization
         bindParam('param-sensitivity', 'viewSensitivity');
 
@@ -374,7 +376,7 @@ class App {
         this.simulation.params.slopeMag = getVal('param-slope-mag');
         this.simulation.params.slopeDir = getVal('param-slope-dir');
         this.simulation.params.initialWaterLevel = getVal('param-water');
-        
+
         const seedEl = document.getElementById('param-seed');
         if (seedEl) {
             this.simulation.params.seed = seedEl.value;
@@ -383,13 +385,13 @@ class App {
         // Handle size change
         const sizeIdx = getVal('param-size', true);
         const newSize = this.sizes[sizeIdx];
-        
+
         if (newSize !== this.gridSize) {
             this.gridSize = newSize;
             // Re-init simulation with new size
             const oldParams = this.simulation.params;
             this.simulation = new GPUSimulation(this.canvas, this.gridSize, oldParams);
-            
+
             // Reset camera target
             this.cameraState.position = [this.gridSize / 2, -this.gridSize * 0.2, this.gridSize * 0.5];
             this.updateCamera();
@@ -397,10 +399,10 @@ class App {
         } else {
             this.simulation.reset();
         }
-        
+
         this.draw();
         this.updateStatus();
-        
+
         if (popup) {
             popup.style.display = 'none';
         }
@@ -408,18 +410,18 @@ class App {
 
     updateCamera() {
         const { position, yaw, pitch } = this.cameraState;
-        
+
         const cosPitch = Math.cos(pitch);
         const sinPitch = Math.sin(pitch);
         const cosYaw = Math.cos(yaw);
         const sinYaw = Math.sin(yaw);
-        
+
         const forward = [
             cosPitch * cosYaw,
             cosPitch * sinYaw,
             sinPitch
         ];
-        
+
         const target = [
             position[0] + forward[0],
             position[1] + forward[1],
@@ -438,10 +440,10 @@ class App {
         const { yaw } = this.cameraState;
         const c = Math.cos(yaw);
         const s = Math.sin(yaw);
-        
+
         const forward = [c, s, 0];
         const right = [s, -c, 0];
-        
+
         let moved = false;
 
         if (this.keys.w) {
@@ -474,7 +476,7 @@ class App {
             this.cameraState.position[2] -= moveSpeed;
             moved = true;
         }
-        
+
         if (moved) {
             this.updateCamera();
         }
@@ -487,7 +489,7 @@ class App {
         const s = this.isRunning ? 'Running' : 'Paused';
         const p = this.simulation.params;
         const stats = this.simulation.calculateStats();
-        
+
         const camPos = this.cameraState.position.map(v => v.toFixed(1)).join(', ');
         const camYaw = (this.cameraState.yaw * 180 / Math.PI).toFixed(1);
         const camPitch = (this.cameraState.pitch * 180 / Math.PI).toFixed(1);
@@ -560,7 +562,7 @@ class App {
             const response = await fetch('version.json');
             const data = await response.json();
             console.log(`Build: ${data.build} (${data.date})`);
-            
+
             const el = document.getElementById('status');
             if (el) {
                 this.versionString = `Build: ${data.build}`;
