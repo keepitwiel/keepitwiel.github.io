@@ -79,29 +79,37 @@ vec3 getNormal(vec2 p) {
 }
 
 bool rayMarch(vec2 tBox, vec3 ro, vec3 rd, out float t_out) {
-    float t = max(0.0, tBox.x);
+    float t = max(0.001, tBox.x);
     float tMax = tBox.y;
 
     bool res = false;
+    float t_prev = t;
+    float d_prev = 0.0;
     
     for(int i = 0; i < MAX_STEPS; i++) {
         if (t > tMax) break;
         vec3 p = ro + rd * t;
         
-        float h = getTerrainHeight(p.xy);
+        float b = getTerrainHeight(p.xy);
         float w = getWaterHeight(p.xy);
         float s = getSediment(p.xy);
-        float surfaceH = h + w + s;
+        float h = b + w + s;
+        float d = p.z - h;
         
-        if (p.z < surfaceH) {
+        if (d < 0.0) {
             res = true;
-            t -= 0.5;
-            p = ro + rd * t;
+            if (i > 0) {
+                // find exact intersection using interpolation
+                float lambda = d_prev / (d_prev - d);
+                t = mix(t_prev, t, lambda);
+            }
             break;
         }
         
-        float heightDiff = p.z - surfaceH;
-        float dt = max(1.0, heightDiff * 0.4);
+        d_prev = d;
+        t_prev = t;
+        
+        float dt = 0.01 * t;
         t += dt;
     }
     t_out = t;
