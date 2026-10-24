@@ -1,5 +1,3 @@
-# Local Inference on a Raspberry Pi
-
 _TL;DR: not worth it, but fun!_
 
 I had a couple of idle Rasberry Pi 3B+ lying around, so I decided to see if they could run a small "large" language model (LLM) and what the performance would be. Foolhardedly and against better judgment I thought could put them to work as clankers for my software development efforts. At the very least I would have learned something along the way.
