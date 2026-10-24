@@ -98,7 +98,7 @@ Both Smol models got a 0 score, but this is likely because answers were not extr
 I'm not super impressed - these are not hard questions and reveal a lack of basic knowledge and reasoning.
 
 <small>
-* The answers in the questionnaire were not equally distributed between 0, 1, 2, 3, so a random guess would not yield a 10/40 score per se.
+(*) The answers in the questionnaire were not equally distributed between 0, 1, 2, 3, so a random guess would not yield a 10/40 score per se.
 </small>
 
 
