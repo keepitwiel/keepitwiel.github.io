@@ -127,9 +127,12 @@ def mul(a, b):
 Not a definitive rejection of the function under review, but so far so good, keep going Smol!
 
 ```
-This function uses the * operator to multiply the two numbers together, and the / operator to divide the result by the second number.
+This function uses the * operator to multiply the two numbers together, 
+and the / operator to divide the result by the second number.
 
-However, this function is not efficient for large numbers because it performs multiplication by long division. A more efficient approach would be to use the ** operator, which is more suitable for large numbers:
+However, this function is not efficient for large numbers because it 
+performs multiplication by long division. A more efficient approach 
+would be to use the ** operator, which is more suitable for large numbers:
 
 def mul(a, b):
     return a ** b
@@ -150,3 +153,7 @@ There might also be some model architecture that optimizes for the 3B+ hardware,
 Finally, a proper agent harness could do wonders for model usability as it has done for the frontier models, but that is not an issue of pure inference.
 
 Thank you for your `Q.K^T`!
+
+
+## ADDENDUM
+I used DeepSeek v4.1 to assist with model infrastructure, serving, and benchmark design.
